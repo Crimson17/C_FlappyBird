@@ -10,16 +10,31 @@ const int _fps = 15;
 const int _frameWidth = 119; // Default console width for 16 font size
 const int _frameHeight = 29; // Default console height for 16 font size
 const float _gravity = 30;
+const int _horizontalSpeed = 3; // Tiles per second
 
 int main(void)
 {
+    // Memory allocation
+    char **_frame = AllocateFrameMemory(_frameWidth, _frameHeight);
+    PILLAR *pillars = (PILLAR *)calloc((_frameWidth / 20) + 2, sizeof(PILLAR));
+    if (pillars == NULL)
+    {
+        return -1;
+    }
+
+    for(int i=0; i<(_frameWidth / 20) + 2; i++){
+        (pillars+i)->x = 90;
+        (pillars+i)->y = 15;
+    }
+
     // Data setup
     srand((unsigned)time(NULL));
-    char **_frame = AllocateFrameMemory(_frameWidth, _frameHeight);
     float timeToSleep = (1.0 / _fps) * 1000;
     float _playerPosition = _frameHeight / 2;
     float _playerVelocity = 0;
+    int pillarCounter = 0;
     globalRunning = 1;
+    SCORE playerScore = {0};
 
     // Console setup
     HANDLE hStdout;
@@ -34,10 +49,11 @@ int main(void)
     curInfo.bVisible = FALSE;
     SetConsoleCursorInfo(hStdOut, &curInfo);
 
+    int frameCounter = 0;
     // Game loop
     while (globalRunning)
     {
-        // Check for input
+        // Handle the input
         if (kbhit())
         {
             char c;
@@ -48,6 +64,7 @@ int main(void)
             if (c == 32)
             {
                 _playerVelocity -= 10;
+                playerScore.spaceCounter++;
             }
             else if (c == 27)
             {
@@ -55,23 +72,28 @@ int main(void)
             }
         }
 
-        // Clears frame data
+        // Cleares frame data
         ClearFrame(_frame, _frameWidth, _frameHeight);
         SetConsoleCursorInfo(hStdOut, &curInfo);
 
-        // Construct the frame
+        // Constructs the frame
+        SetPillars(_frame, _frameWidth, _frameHeight, pillars, (_frameWidth / 20) + 2);
         UpdatePhysics(&_playerPosition, &_playerVelocity, _gravity, _fps);
-        SetPlayerPos(_frame, _frameWidth, _frameHeight, _playerPosition);
-        SpawnPillair(_frame, _frameHeight, 90, 5);
+        SetPlayer(_frame, _frameWidth, _frameHeight, _playerPosition);
 
-        // Display the frame
+        // Displays the frame
         DisplayFrame(_frame, _frameHeight);
 
-        // Sleep to delay frame
-        Sleep(timeToSleep); // A rough estimate, since it takes time to render frame, it doesn't have to be perfect fps
+        // Sleep to delay the frame
+        frameCounter++;
+        playerScore.timeSurvived += 0.033;
+        Sleep(timeToSleep); // A rough estimate, since it takes time to render frame it's not perfect but it's ok
     }
 
     FreeFrameMemory(_frame, _frameHeight);
+    free(pillars);
+    SaveUserScore("score.txt", &playerScore);
+
     system("cls");
     printf(" Game over! Press ENTER to exit...");
     getchar();

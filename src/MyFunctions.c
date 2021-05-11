@@ -47,7 +47,13 @@ void ClearFrame(char **frame, int frameWidth, int frameHeight)
     }
 }
 
-void SetPlayerPos(char **frame, int frameWidth, int frameHeight, int playerPosition)
+void UpdatePhysics(float *playerPosition, float *playerVelocity, float gravity, int fps)
+{
+    *playerVelocity += (gravity / fps);
+    *playerPosition += (*playerVelocity / fps);
+}
+
+void SetPlayer(char **frame, int frameWidth, int frameHeight, int playerPosition)
 {
     if (playerPosition >= 0 && playerPosition < frameHeight)
     {
@@ -66,32 +72,45 @@ void SetPlayerPos(char **frame, int frameWidth, int frameHeight, int playerPosit
     }
 }
 
-void UpdatePhysics(float *playerPosition, float *playerVelocity, float gravity, int fps)
+int PointInFrame(int frameWidth, int frameHeight, int x, int y)
 {
-    *playerVelocity += (gravity / fps);
-    *playerPosition += (*playerVelocity / fps);
+    if (x < 0 || x >= frameWidth || y < 0 || y >= frameHeight)
+    {
+        return 0;
+    }
+    return 1;
 }
 
-void SpawnPillair(char **frame, int frameHeight, int xPos, int yPos)
+void SetPillars(char **frame, int frameWidth, int frameHeight, PILLAR *pillars, int n)
 {
-    // Upper pillair
-    for (int y = 0; y < (yPos - 2); y++)
+    for (int i = 0; i < n; i++)
     {
-        int xLen = y < (yPos - 4) ? xPos + 3 : xPos + 4;
-        int xStart = y < (yPos - 4) ? xPos - 1 : xPos - 2;
-        for (int x = xStart; x < xLen; x++)
+        // Upper pillair
+        for (int y = 0; y < ((pillars + i)->y - 2); y++)
         {
-            *(*(frame + y) + x) = '#';
+
+            int xLen = y < ((pillars + i)->y - 4) ? (pillars + i)->x + 3 : (pillars + i)->x + 4;
+            int xStart = y < ((pillars + i)->y - 4) ? (pillars + i)->x - 1 : (pillars + i)->x - 2;
+            for (int x = xStart; x < xLen; x++)
+            {
+                if (PointInFrame(frameWidth, frameHeight, x, y))
+                {
+                    *(*(frame + y) + x) = '#';
+                }
+            }
         }
-    }
-    // Lower pillair
-    for (int y = yPos + 2; y < frameHeight; y++)
-    {
-        int xLen = y > (yPos + 3) ? xPos + 3 : xPos + 4;
-        int xStart = y > (yPos + 3) ? xPos - 1 : xPos - 2;
-        for (int x = xStart; x < xLen; x++)
+        // Lower pillair
+        for (int y = (pillars + i)->y + 2; y < frameHeight; y++)
         {
-            *(*(frame + y) + x) = '#';
+            int xLen = y > ((pillars + i)->y + 3) ? (pillars + i)->x + 3 : (pillars + i)->x + 4;
+            int xStart = y > ((pillars + i)->y + 3) ? (pillars + i)->x - 1 : (pillars + i)->x - 2;
+            for (int x = xStart; x < xLen; x++)
+            {
+                if (PointInFrame(frameWidth, frameHeight, x, y))
+                {
+                    *(*(frame + y) + x) = '#';
+                }
+            }
         }
     }
 }
@@ -102,4 +121,29 @@ void DisplayFrame(char **frame, int frameHeight)
     {
         printf("%s", *(frame + i));
     }
+}
+
+void SaveUserScore(const char *fileName, SCORE *data)
+{
+    FILE *fp = fopen(fileName, "r");
+    if (fp == NULL)
+    {
+        fp = fopen(fileName, "w");
+        if (fp == NULL)
+        {
+            exit(-1);
+        }
+        fclose(fp);
+    }
+    else
+    {
+        fclose(fp);
+    }
+    fp = fopen(fileName, "a");
+    if (fp == NULL)
+    {
+        exit(-1);
+    }
+    fprintf(fp, "Pillars passed: %d, Spacebar presses: %d, Time taken: %.2f seconds\n", data->pillarsPassed, data->spaceCounter, data->timeSurvived);
+    fclose(fp);
 }

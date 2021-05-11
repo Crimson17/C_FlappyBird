@@ -4,9 +4,14 @@
 typedef struct Score
 {
     int spaceCounter;
-    int passedPillars;
+    int pillarsPassed;
     float timeSurvived;
 } SCORE;
+
+typedef struct Pillar{
+    int x;
+    int y;
+}PILLAR;
 
 int globalRunning;
 
