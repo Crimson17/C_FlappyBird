@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include <conio.h>
 #include <windows.h>
 #include "..\include\MyFunctions.h"
 #include "..\include\MyStructures.h"
@@ -29,7 +28,7 @@ int main(void)
     float _playerPosition = _frameHeight / 2; // Should turn this into a struct called player
     float _playerVelocity = 0;
 
-    SCORE playerScore = {0};
+    SCORE _playerScore = {0};
     int pillarSetupCounter = 0;
     for (int i = 0; i < (_frameWidth / 20) + 2; i++)
     {
@@ -57,30 +56,14 @@ int main(void)
     while (globalRunning)
     {
         // Handle the input
-        if (kbhit())
-        {
-            char c;
-            while (kbhit())
-            {
-                c = _getch();
-            }
-            if (c == 32)
-            {
-                _playerVelocity -= 10;
-                playerScore.spaceCounter++;
-            }
-            else if (c == 27)
-            {
-                globalRunning = 0;
-            }
-        }
+        Input(&_playerVelocity, _playerScore);
 
         // Cleares frame data
         ClearFrame(_frame, _frameWidth, _frameHeight);
         SetConsoleCursorInfo(hStdOut, &curInfo);
 
         // Constructs the frame
-        PillarLogic(pillars, (_frameWidth / 20) + 2, frameCounter, _frameHeight, _frameWidth);
+        PillarLogic(pillars, (_frameWidth / 20) + 2, frameCounter, _frameHeight, _frameWidth); // Have to add player pillar counter
         SetPillars(_frame, _frameWidth, _frameHeight, pillars, (_frameWidth / 20) + 2);
         UpdatePhysics(&_playerPosition, &_playerVelocity, _gravity, _fps);
         SetPlayer(_frame, _frameWidth, _frameHeight, _playerPosition);
@@ -90,13 +73,13 @@ int main(void)
 
         // Sleep to delay the frame
         frameCounter++;
-        playerScore.timeSurvived += 0.033;
+        _playerScore.timeSurvived += 0.033;
         Sleep(timeToSleep); // A rough estimate, since it takes time to render frame it's not perfect but it's ok
     }
 
     FreeFrameMemory(_frame, _frameHeight);
     free(pillars);
-    SaveUserScore("score.txt", &playerScore);
+    SaveUserScore("score.txt", &_playerScore);
 
     system("cls");
     printf(" Game over! Press ENTER to exit...");

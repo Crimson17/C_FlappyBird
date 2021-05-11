@@ -2,8 +2,30 @@
 #include <stdlib.h>
 #include <time.h>
 #include <math.h>
+#include <conio.h>
 #include "..\include\MyFunctions.h"
 #include "..\include\MyStructures.h"
+
+void Input(float *playerVelocity, SCORE *playerScore)
+{
+    if (kbhit())
+    {
+        char c;
+        while (kbhit())
+        {
+            c = _getch();
+        }
+        if (c == 32)
+        {
+            *playerVelocity -= 10;
+            playerScore->spaceCounter++;
+        }
+        else if (c == 27)
+        {
+            globalRunning = 0;
+        }
+    }
+}
 
 char **AllocateFrameMemory(int frameWidth, int frameHeight)
 {
@@ -57,7 +79,7 @@ void SetPlayer(char **frame, int frameWidth, int frameHeight, int playerPosition
 {
     if (playerPosition >= 0 && playerPosition < frameHeight)
     {
-        if (1)//*(*(frame + (int)playerPosition) + frameWidth / 4) != '#')
+        if (*(*(frame + (int)playerPosition) + frameWidth / 4) != '#')
         {
             *(*(frame + (int)playerPosition) + frameWidth / 4) = '@';
         }
@@ -81,12 +103,15 @@ int PointInFrame(int frameWidth, int frameHeight, int x, int y)
     return 1;
 }
 
-void PillarLogic(PILLAR *pillars, int n, int frameCount, int frameHeight, int frameWidth){
-    for(int i=0; i<n; i++){
-        (pillars+i)->x--;
-        if((pillars+i)->x == -4){   // -4 ostavi vise prostora izmedu svakih (_frameWidth / 20) + 2 pillera da budem barem malo lakse za igrati :)
-            (pillars+i)->x = frameWidth + 22;
-            (pillars+i)->y = 5 + (float)rand() / RAND_MAX * (frameHeight - 10);
+void PillarLogic(PILLAR *pillars, int n, int frameCount, int frameHeight, int frameWidth)
+{
+    for (int i = 0; i < n; i++)
+    {
+        (pillars + i)->x--;
+        if ((pillars + i)->x == -4)
+        { // -4 ostavi vise prostora izmedu svakih (_frameWidth / 20) + 2 pillera da budem barem malo lakse za igrati :)
+            (pillars + i)->x = frameWidth + 22;
+            (pillars + i)->y = 5 + (float)rand() / RAND_MAX * (frameHeight - 10);
         }
     }
 }
