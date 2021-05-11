@@ -22,19 +22,22 @@ int main(void)
         return -1;
     }
 
-    for(int i=0; i<(_frameWidth / 20) + 2; i++){
-        (pillars+i)->x = 90;
-        (pillars+i)->y = 15;
-    }
-
     // Data setup
     srand((unsigned)time(NULL));
     float timeToSleep = (1.0 / _fps) * 1000;
-    float _playerPosition = _frameHeight / 2;
+
+    float _playerPosition = _frameHeight / 2; // Should turn this into a struct called player
     float _playerVelocity = 0;
-    int pillarCounter = 0;
-    globalRunning = 1;
+
     SCORE playerScore = {0};
+    int pillarSetupCounter = 0;
+    for (int i = 0; i < (_frameWidth / 20) + 2; i++)
+    {
+        (pillars + i)->x = _frameWidth + 2 + pillarSetupCounter;
+        (pillars + i)->y = 5 + (float)rand() / RAND_MAX * (_frameHeight - 10);
+        pillarSetupCounter += 20;
+    }
+    globalRunning = 1;
 
     // Console setup
     HANDLE hStdout;
@@ -77,6 +80,7 @@ int main(void)
         SetConsoleCursorInfo(hStdOut, &curInfo);
 
         // Constructs the frame
+        PillarLogic(pillars, (_frameWidth / 20) + 2, frameCounter, _frameHeight, _frameWidth);
         SetPillars(_frame, _frameWidth, _frameHeight, pillars, (_frameWidth / 20) + 2);
         UpdatePhysics(&_playerPosition, &_playerVelocity, _gravity, _fps);
         SetPlayer(_frame, _frameWidth, _frameHeight, _playerPosition);

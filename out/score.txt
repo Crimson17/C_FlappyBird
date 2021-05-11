@@ -1,2 +1,3 @@
-Pillars passed: 0, Spacebar presses: 18, Time taken: 2.67 seconds
-Pillars passed: 0, Spacebar presses: 2, Time taken: 0.53 seconds
+Pillars passed: 0, Spacebar presses: 47, Time taken: 7.89 seconds
+Pillars passed: 0, Spacebar presses: 27, Time taken: 4.29 seconds
+Pillars passed: 0, Spacebar presses: 23, Time taken: 3.56 seconds

@@ -57,7 +57,7 @@ void SetPlayer(char **frame, int frameWidth, int frameHeight, int playerPosition
 {
     if (playerPosition >= 0 && playerPosition < frameHeight)
     {
-        if (*(*(frame + (int)playerPosition) + frameWidth / 4) != '#')
+        if (1)//*(*(frame + (int)playerPosition) + frameWidth / 4) != '#')
         {
             *(*(frame + (int)playerPosition) + frameWidth / 4) = '@';
         }
@@ -79,6 +79,16 @@ int PointInFrame(int frameWidth, int frameHeight, int x, int y)
         return 0;
     }
     return 1;
+}
+
+void PillarLogic(PILLAR *pillars, int n, int frameCount, int frameHeight, int frameWidth){
+    for(int i=0; i<n; i++){
+        (pillars+i)->x--;
+        if((pillars+i)->x == -4){   // -4 ostavi vise prostora izmedu svakih (_frameWidth / 20) + 2 pillera da budem barem malo lakse za igrati :)
+            (pillars+i)->x = frameWidth + 22;
+            (pillars+i)->y = 5 + (float)rand() / RAND_MAX * (frameHeight - 10);
+        }
+    }
 }
 
 void SetPillars(char **frame, int frameWidth, int frameHeight, PILLAR *pillars, int n)

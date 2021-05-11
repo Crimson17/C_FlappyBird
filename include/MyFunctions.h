@@ -12,6 +12,7 @@ int PointInFrame(int frameHeight, int frameWidth, int x, int y);
 
 void SetPlayer(char **frame, int frameWidth, int frameHeight, int position);
 void UpdatePhysics(float *playerPosition, float *playerVelocity, float gravity, int fps);
+void PillarLogic(PILLAR *pillars, int n, int frameCount, int frameHeight, int frameWidth);
 void SetPillars(char **frame, int frameWidth, int frameHeight, PILLAR *pillars, int n);
 
 void SaveUserScore(const char *fileName, SCORE *data);
