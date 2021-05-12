@@ -1,6 +1,14 @@
 #ifndef MYSTRUCTURES_H
 #define MYSTRUCTURES_H
 
+// Player...
+typedef struct Player
+{
+    float position;
+    float velocity;
+} PLAYER;
+
+// Players score
 typedef struct Score
 {
     int spaceCounter;
@@ -8,11 +16,14 @@ typedef struct Score
     float timeSurvived;
 } SCORE;
 
-typedef struct Pillar{
+// Pillar...
+typedef struct Pillar
+{
     int x;
     int y;
-}PILLAR;
+} PILLAR;
 
+// Game loop condition
 int globalRunning;
 
 #endif

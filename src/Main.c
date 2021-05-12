@@ -8,35 +8,25 @@
 const int _fps = 15;
 const int _frameWidth = 119; // Default console width for 16 font size
 const int _frameHeight = 29; // Default console height for 16 font size
-const float _gravity = 30;
+const float _gravity = 30;  // Player gravity
 const int _horizontalSpeed = 3; // Tiles per second
 
 int main(void)
 {
-    // Memory allocation
-    char **_frame = AllocateFrameMemory(_frameWidth, _frameHeight);
-    PILLAR *pillars = (PILLAR *)calloc((_frameWidth / 20) + 2, sizeof(PILLAR));
-    if (pillars == NULL)
-    {
-        return -1;
-    }
-
     // Data setup
     srand((unsigned)time(NULL));
-    float timeToSleep = (1.0 / _fps) * 1000;
+    float timeToSleep = (1.0 / _fps) * 1000;   // Time between frames
+    int _pillarCount = (_frameWidth / 20) + 2; // Number of pillars
+    PLAYER _player = {_frameHeight / 2, 0};    // Player data
+    SCORE _playerScore = {0};                  // Player score
+    globalRunning = 1;                         // Game loop condition
 
-    float _playerPosition = _frameHeight / 2; // Should turn this into a struct called player
-    float _playerVelocity = 0;
+    // Memory allocation
+    PILLAR *_pillars = AllocatePillarMemory(_pillarCount);
+    char **_frame = AllocateFrameMemory(_frameWidth, _frameHeight, _pillars);
 
-    SCORE _playerScore = {0};
-    int pillarSetupCounter = 0;
-    for (int i = 0; i < (_frameWidth / 20) + 2; i++)
-    {
-        (pillars + i)->x = _frameWidth + 2 + pillarSetupCounter;
-        (pillars + i)->y = 5 + (float)rand() / RAND_MAX * (_frameHeight - 10);
-        pillarSetupCounter += 20;
-    }
-    globalRunning = 1;
+    // Sets all pillars to the right in the default configuration
+    PillarConstructor(_pillars, _pillarCount, _frameWidth, _frameHeight);
 
     // Console setup
     HANDLE hStdout;
@@ -51,34 +41,32 @@ int main(void)
     curInfo.bVisible = FALSE;
     SetConsoleCursorInfo(hStdOut, &curInfo);
 
-    int frameCounter = 0;
     // Game loop
     while (globalRunning)
     {
         // Handle the input
-        Input(&_playerVelocity, &_playerScore);
+        Input(&_player, &_playerScore);
 
         // Cleares frame data
         ClearFrame(_frame, _frameWidth, _frameHeight);
         SetConsoleCursorInfo(hStdOut, &curInfo);
 
-        // Constructs the frame
-        PillarLogic(pillars, (_frameWidth / 20) + 2, frameCounter, _frameHeight, _frameWidth, &_playerScore); // Have to add player pillar counter
-        SetPillars(_frame, _frameWidth, _frameHeight, pillars, (_frameWidth / 20) + 2);
-        UpdatePhysics(&_playerPosition, &_playerVelocity, _gravity, _fps);
-        SetPlayer(_frame, _frameWidth, _frameHeight, _playerPosition);
+        // Frame constructors
+        PillarLogic(_pillars, _pillarCount, _frameHeight, _frameWidth, &_playerScore); // Generates the pillars
+        SetPillars(_frame, _frameWidth, _frameHeight, _pillars, _pillarCount);         // Builds pillas to the frame
+        UpdatePlayerPhysics(&_player, _gravity, _fps);                                 // Updates player physics
+        SetPlayer(_frame, _frameWidth, _frameHeight, &_player);                        // Builds player to the frame
 
         // Displays the frame
-        DisplayFrame(_frame, _frameHeight);
+        DisplayFrame(_frame, _frameHeight); // Renders the frame
 
         // Sleep to delay the frame
-        frameCounter++;
         _playerScore.timeSurvived += 0.033;
         Sleep(timeToSleep); // A rough estimate, since it takes time to render frame it's not perfect but it's ok
     }
 
     FreeFrameMemory(_frame, _frameHeight);
-    free(pillars);
+    free(_pillars);
     SaveUserScore("score.txt", &_playerScore);
 
     system("cls");

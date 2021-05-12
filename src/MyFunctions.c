@@ -6,7 +6,61 @@
 #include "..\include\MyFunctions.h"
 #include "..\include\MyStructures.h"
 
-void Input(float *playerVelocity, SCORE *score)
+// Allocate memory for the pillars
+PILLAR *AllocatePillarMemory(int pillarCount)
+{
+    PILLAR *pillars = (PILLAR *)calloc(pillarCount, sizeof(PILLAR));
+    if (pillars == NULL)
+    {
+        exit(-1);
+    }
+    return pillars;
+}
+
+// Allocates memory for a frame(char matrix)
+char **AllocateFrameMemory(int frameWidth, int frameHeight, PILLAR *pillars)
+{
+    char **matrix = (char **)calloc(frameHeight, sizeof(char *));
+    if (matrix == NULL)
+    {
+        free(pillars);
+        exit(-1);
+    }
+    for (int i = 0; i < frameHeight; i++)
+    {
+        *(matrix + i) = (char *)calloc(frameWidth + 2, sizeof(char));
+        if (*(matrix + i) == NULL)
+        {
+            free(pillars);
+            free(matrix);
+            exit(-1);
+        }
+    }
+    return matrix;
+}
+
+// Frees matrix memory
+void FreeFrameMemory(char **frame, int frameHeight)
+{
+    for (int i = 0; i < frameHeight; i++)
+    {
+        free(*(frame + i));
+    }
+    free(frame);
+}
+
+// Default pillar configuration
+void PillarConstructor(PILLAR *pillars, int pillarCount, int frameWidth, int frameHeight)
+{
+    for (int i = 0; i < pillarCount; i++)
+    {
+        (pillars + i)->x = frameWidth + 2 + (i * 20);
+        (pillars + i)->y = 5 + (float)rand() / RAND_MAX * (frameHeight - 10);
+    }
+}
+
+// Handles the keyboard input (SPACEBAR and ESC)
+void Input(PLAYER *player, SCORE *score)
 {
     if (kbhit())
     {
@@ -17,7 +71,7 @@ void Input(float *playerVelocity, SCORE *score)
         }
         if (c == 32)
         {
-            *playerVelocity -= 10;
+            player->velocity -= 10;
             score->spaceCounter++;
         }
         else if (c == 27)
@@ -27,34 +81,7 @@ void Input(float *playerVelocity, SCORE *score)
     }
 }
 
-char **AllocateFrameMemory(int frameWidth, int frameHeight)
-{
-    char **matrix = (char **)calloc(frameHeight, sizeof(char *));
-    if (matrix == NULL)
-    {
-        exit(-1);
-    }
-    for (int i = 0; i < frameHeight; i++)
-    {
-        *(matrix + i) = (char *)calloc(frameWidth + 2, sizeof(char));
-        if (*(matrix + i) == NULL)
-        {
-            free(matrix);
-            exit(-1);
-        }
-    }
-    return matrix;
-}
-
-void FreeFrameMemory(char **frame, int frameHeight)
-{
-    for (int i = 0; i < frameHeight; i++)
-    {
-        free(*(frame + i));
-    }
-    free(frame);
-}
-
+// Resets all frame chars to space
 void ClearFrame(char **frame, int frameWidth, int frameHeight)
 {
     int y, x;
@@ -69,31 +96,16 @@ void ClearFrame(char **frame, int frameWidth, int frameHeight)
     }
 }
 
-void UpdatePhysics(float *playerPosition, float *playerVelocity, float gravity, int fps)
+// Prints all chars to the terminal
+void DisplayFrame(char **frame, int frameHeight)
 {
-    *playerVelocity += (gravity / fps);
-    *playerPosition += (*playerVelocity / fps);
-}
-
-void SetPlayer(char **frame, int frameWidth, int frameHeight, int playerPosition)
-{
-    if (playerPosition >= 0 && playerPosition < frameHeight)
+    for (int i = 0; i < frameHeight; i++)
     {
-        if (*(*(frame + (int)playerPosition) + frameWidth / 4) != '#')
-        {
-            *(*(frame + (int)playerPosition) + frameWidth / 4) = '@';
-        }
-        else
-        {
-            globalRunning = 0;
-        }
-    }
-    else
-    {
-        globalRunning = 0;
+        printf("%s", *(frame + i));
     }
 }
 
+// Returns true if the "point" is visible (in frame) or false if it's not
 int PointInFrame(int frameWidth, int frameHeight, int x, int y)
 {
     if (x < 0 || x >= frameWidth || y < 0 || y >= frameHeight)
@@ -103,25 +115,28 @@ int PointInFrame(int frameWidth, int frameHeight, int x, int y)
     return 1;
 }
 
-void PillarLogic(PILLAR *pillars, int n, int frameCount, int frameHeight, int frameWidth, SCORE *score)
+// Moves all pillars the left with constant speed, if the pillar is completely to the left out of the frame it is "teleported" to the complete right out of the frame
+void PillarLogic(PILLAR *pillars, int pillarCount, int frameHeight, int frameWidth, SCORE *score)
 {
-    for (int i = 0; i < n; i++)
+    for (int i = 0; i < pillarCount; i++)
     {
         (pillars + i)->x--;
-        if ((pillars + i)->x == -4)
-        { // -4 ostavi vise prostora izmedu svakih (_frameWidth / 20) + 2 pillera da budem barem malo lakse za igrati :)
+        if ((pillars + i)->x == -4) // sa -4 bude vise prostora izmedu svakih (_frameWidth / 20) + 2 pillera pa je sada barem malo lakse za igrati :)
+        {
             (pillars + i)->x = frameWidth + 22;
             (pillars + i)->y = 5 + (float)rand() / RAND_MAX * (frameHeight - 10);
         }
-        else if((pillars + i)->x == (frameWidth / 4)-1){
+        else if ((pillars + i)->x == (frameWidth / 4) - 1)
+        {
             score->pillarsPassed++;
         }
     }
 }
 
-void SetPillars(char **frame, int frameWidth, int frameHeight, PILLAR *pillars, int n)
+// Sets pillars in the matrix depening on the location calculate with PillarLogic()
+void SetPillars(char **frame, int frameWidth, int frameHeight, PILLAR *pillars, int pillarCount)
 {
-    for (int i = 0; i < n; i++)
+    for (int i = 0; i < pillarCount; i++)
     {
         // Upper pillair
         for (int y = 0; y < ((pillars + i)->y - 2); y++)
@@ -153,14 +168,34 @@ void SetPillars(char **frame, int frameWidth, int frameHeight, PILLAR *pillars, 
     }
 }
 
-void DisplayFrame(char **frame, int frameHeight)
+// Updates player physics
+void UpdatePlayerPhysics(PLAYER *player, float gravity, int fps)
 {
-    for (int i = 0; i < frameHeight; i++)
+    player->velocity += (gravity / fps);
+    player->position += (player->velocity / fps);
+}
+
+// Sets player to the frame matrix depening on the physics
+void SetPlayer(char **frame, int frameWidth, int frameHeight, PLAYER *player)
+{
+    if (player->position >= 0 && player->position < frameHeight)
     {
-        printf("%s", *(frame + i));
+        if (*(*(frame + (int)player->position) + frameWidth / 4) != '#')
+        {
+            *(*(frame + (int)player->position) + frameWidth / 4) = '@';
+        }
+        else
+        {
+            globalRunning = 0;
+        }
+    }
+    else
+    {
+        globalRunning = 0;
     }
 }
 
+// Saves players score after the game is finished!
 void SaveUserScore(const char *fileName, SCORE *data)
 {
     FILE *fp = fopen(fileName, "r");
