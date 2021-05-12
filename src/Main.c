@@ -9,7 +9,6 @@ const int _fps = 15;
 const int _frameWidth = 119;    // Default console width for 16 font size
 const int _frameHeight = 29;    // Default console height for 16 font size
 const float _gravity = 30;      // Player gravity
-const int _horizontalSpeed = 3; // Tiles per second
 
 int main(void)
 {
