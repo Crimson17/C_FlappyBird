@@ -29,9 +29,9 @@ int main(void)
     PillarConstructor(_pillars, _pillarCount, _frameWidth, _frameHeight);
 
     // Console setup
-    HANDLE hStdOut = NULL;
+    HANDLE hStdOut = GetStdHandle(STD_OUTPUT_HANDLE);
+    COORD startPosition = {0, 0};
     CONSOLE_CURSOR_INFO curInfo;
-    hStdOut = GetStdHandle(STD_OUTPUT_HANDLE);
     GetConsoleCursorInfo(hStdOut, &curInfo);
     curInfo.bVisible = FALSE;
     SetConsoleCursorInfo(hStdOut, &curInfo);
@@ -44,7 +44,6 @@ int main(void)
 
         // Cleares frame data
         ClearFrame(_frame, _frameWidth, _frameHeight);
-        SetConsoleCursorInfo(hStdOut, &curInfo);
 
         // Frame constructors
         PillarLogic(_pillars, _pillarCount, _frameHeight, _frameWidth, &_playerScore); // Generates the pillars
@@ -52,7 +51,9 @@ int main(void)
         UpdatePlayerPhysics(&_player, _gravity, _fps);                                 // Updates player physics
         SetPlayer(_frame, _frameWidth, _frameHeight, &_player);                        // Builds player to the frame
 
-        // Displays the frame
+        // Hides the console cursor, resets the console cursor and displays the frame
+        SetConsoleCursorInfo(hStdOut, &curInfo);
+        SetConsoleCursorPosition(hStdOut, startPosition);
         DisplayFrame(_frame, _frameHeight); // Renders the frame
 
         // Sleep to delay the frame
