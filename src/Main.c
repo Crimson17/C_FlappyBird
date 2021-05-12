@@ -6,9 +6,9 @@
 #include "..\include\MyStructures.h"
 
 const int _fps = 15;
-const int _frameWidth = 119; // Default console width for 16 font size
-const int _frameHeight = 29; // Default console height for 16 font size
-const float _gravity = 30;  // Player gravity
+const int _frameWidth = 119;    // Default console width for 16 font size
+const int _frameHeight = 29;    // Default console height for 16 font size
+const float _gravity = 30;      // Player gravity
 const int _horizontalSpeed = 3; // Tiles per second
 
 int main(void)
@@ -29,11 +29,6 @@ int main(void)
     PillarConstructor(_pillars, _pillarCount, _frameWidth, _frameHeight);
 
     // Console setup
-    HANDLE hStdout;
-    COORD destCoord;
-    hStdout = GetStdHandle(STD_OUTPUT_HANDLE);
-    destCoord.X = 0;
-    destCoord.Y = 0;
     HANDLE hStdOut = NULL;
     CONSOLE_CURSOR_INFO curInfo;
     hStdOut = GetStdHandle(STD_OUTPUT_HANDLE);
