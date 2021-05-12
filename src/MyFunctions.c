@@ -217,6 +217,6 @@ void SaveUserScore(const char *fileName, SCORE *data)
     {
         exit(-1);
     }
-    fprintf(fp, "Pillars passed: %d, Spacebar presses: %d, Time taken: %.2f seconds\n", data->pillarsPassed, data->spaceCounter, data->timeSurvived);
+    fprintf(fp, "Pillars passed: %d, Spacebar presses: %d, Time alive: %.2f seconds\n", data->pillarsPassed, data->spaceCounter, data->timeSurvived);
     fclose(fp);
 }
