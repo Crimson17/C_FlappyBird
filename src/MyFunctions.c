@@ -28,7 +28,7 @@ char **AllocateFrameMemory(int frameWidth, int frameHeight, PILLAR *pillars)
     }
     for (int i = 0; i < frameHeight; i++)
     {
-        *(matrix + i) = (char *)calloc(frameWidth + 2, sizeof(char));
+        *(matrix + i) = (char *)calloc(frameWidth + 2, sizeof(char));   // + 2 for the '\n' and '\0'
         if (*(matrix + i) == NULL)
         {
             free(pillars);
