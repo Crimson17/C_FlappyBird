@@ -6,7 +6,7 @@
 #include "..\include\MyFunctions.h"
 #include "..\include\MyStructures.h"
 
-void Input(float *playerVelocity, SCORE *playerScore)
+void Input(float *playerVelocity, SCORE *score)
 {
     if (kbhit())
     {
@@ -18,7 +18,7 @@ void Input(float *playerVelocity, SCORE *playerScore)
         if (c == 32)
         {
             *playerVelocity -= 10;
-            playerScore->spaceCounter++;
+            score->spaceCounter++;
         }
         else if (c == 27)
         {
@@ -103,7 +103,7 @@ int PointInFrame(int frameWidth, int frameHeight, int x, int y)
     return 1;
 }
 
-void PillarLogic(PILLAR *pillars, int n, int frameCount, int frameHeight, int frameWidth)
+void PillarLogic(PILLAR *pillars, int n, int frameCount, int frameHeight, int frameWidth, SCORE *score)
 {
     for (int i = 0; i < n; i++)
     {
@@ -112,6 +112,9 @@ void PillarLogic(PILLAR *pillars, int n, int frameCount, int frameHeight, int fr
         { // -4 ostavi vise prostora izmedu svakih (_frameWidth / 20) + 2 pillera da budem barem malo lakse za igrati :)
             (pillars + i)->x = frameWidth + 22;
             (pillars + i)->y = 5 + (float)rand() / RAND_MAX * (frameHeight - 10);
+        }
+        else if((pillars + i)->x == (frameWidth / 4)-1){
+            score->pillarsPassed++;
         }
     }
 }

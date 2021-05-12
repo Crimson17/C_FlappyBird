@@ -56,14 +56,14 @@ int main(void)
     while (globalRunning)
     {
         // Handle the input
-        Input(&_playerVelocity, _playerScore);
+        Input(&_playerVelocity, &_playerScore);
 
         // Cleares frame data
         ClearFrame(_frame, _frameWidth, _frameHeight);
         SetConsoleCursorInfo(hStdOut, &curInfo);
 
         // Constructs the frame
-        PillarLogic(pillars, (_frameWidth / 20) + 2, frameCounter, _frameHeight, _frameWidth); // Have to add player pillar counter
+        PillarLogic(pillars, (_frameWidth / 20) + 2, frameCounter, _frameHeight, _frameWidth, &_playerScore); // Have to add player pillar counter
         SetPillars(_frame, _frameWidth, _frameHeight, pillars, (_frameWidth / 20) + 2);
         UpdatePhysics(&_playerPosition, &_playerVelocity, _gravity, _fps);
         SetPlayer(_frame, _frameWidth, _frameHeight, _playerPosition);
