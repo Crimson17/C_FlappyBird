@@ -49,7 +49,7 @@ void FreeFrameMemory(char **frame, int frameHeight)
     free(frame);
 }
 
-// Default pillar configuration
+// Default pillar configuration, places all pillars to the left of the screen for the first time
 void PillarConstructor(PILLAR *pillars, int pillarCount, int frameWidth, int frameHeight)
 {
     for (int i = 0; i < pillarCount; i++)
@@ -59,7 +59,7 @@ void PillarConstructor(PILLAR *pillars, int pillarCount, int frameWidth, int fra
     }
 }
 
-// Handles the keyboard input (SPACEBAR and ESC)
+// Handles the keyboard input (SPACEBAR)
 void Input(PLAYER *player, SCORE *score)
 {
     if (kbhit())
@@ -73,10 +73,6 @@ void Input(PLAYER *player, SCORE *score)
         {
             player->velocity -= 10;
             score->spaceCounter++;
-        }
-        else if (c == 27)
-        {
-            _globalRunning = 0;
         }
     }
 }
@@ -119,13 +115,16 @@ int PointInFrame(int frameWidth, int frameHeight, int x, int y)
 void PillarLogic(PILLAR *pillars, int pillarCount, int frameHeight, int frameWidth, SCORE *score)
 {
     for (int i = 0; i < pillarCount; i++)
-    {
+    {   
+        // Pillar movement
         (pillars + i)->x--;
-        if ((pillars + i)->x == -4) // sa -4 bude vise prostora izmedu svakih (_frameWidth / 20) + 2 pillera pa je sada barem malo lakse za igrati :)
+        // Pillar teleportation
+        if ((pillars + i)->x == -4) 
         {
             (pillars + i)->x = frameWidth + 22;
             (pillars + i)->y = 5 + (float)rand() / RAND_MAX * (frameHeight - 10);
         }
+        // Check if the player has passed a pillar
         else if ((pillars + i)->x == (frameWidth / 4) - 1)
         {
             score->pillarsPassed++;
@@ -138,7 +137,7 @@ void SetPillars(char **frame, int frameWidth, int frameHeight, PILLAR *pillars, 
 {
     for (int i = 0; i < pillarCount; i++)
     {
-        // Upper pillair
+        // Generates upper pillar
         for (int y = 0; y < ((pillars + i)->y - 2); y++)
         {
 
@@ -152,7 +151,7 @@ void SetPillars(char **frame, int frameWidth, int frameHeight, PILLAR *pillars, 
                 }
             }
         }
-        // Lower pillair
+        // Generates lower pillar
         for (int y = (pillars + i)->y + 2; y < frameHeight; y++)
         {
             int xLen = y > ((pillars + i)->y + 3) ? (pillars + i)->x + 3 : (pillars + i)->x + 4;
@@ -178,10 +177,13 @@ void UpdatePlayerPhysics(PLAYER *player, float gravity, int fps)
 // Sets player to the frame matrix depening on the physics
 void SetPlayer(char **frame, int frameWidth, int frameHeight, PLAYER *player)
 {
+    // Check if player is in the frame, else finish the game
     if (player->position >= 0 && player->position < frameHeight)
     {
+        // Check if player is not in the '#', else finish the game
         if (*(*(frame + (int)player->position) + frameWidth / 4) != '#')
         {
+            // If the player is in the allowed position than draw him to the frame
             *(*(frame + (int)player->position) + frameWidth / 4) = '@';
         }
         else
@@ -198,9 +200,12 @@ void SetPlayer(char **frame, int frameWidth, int frameHeight, PLAYER *player)
 // Saves players score after the game is finished!
 void SaveUserScore(const char *fileName, SCORE *data)
 {
+    // Open file stream
     FILE *fp = fopen(fileName, "r");
+    // Check if file exists
     if (fp == NULL)
     {
+        // Generate new if it doesn't exist
         fp = fopen(fileName, "w");
         if (fp == NULL)
         {
@@ -212,11 +217,13 @@ void SaveUserScore(const char *fileName, SCORE *data)
     {
         fclose(fp);
     }
+    // Open file for appending
     fp = fopen(fileName, "a");
     if (fp == NULL)
     {
         exit(-1);
     }
+    // Save score to file and close the file stream
     fprintf(fp, "Pillars passed: %d, Spacebar presses: %d, Time alive: %.2f seconds\n", data->pillarsPassed, data->spaceCounter, data->timeSurvived);
     fclose(fp);
 }

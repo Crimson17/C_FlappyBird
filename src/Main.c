@@ -5,6 +5,7 @@
 #include "..\include\MyFunctions.h"
 #include "..\include\MyStructures.h"
 
+// Game properties
 const int _fps = 15;
 const int _frameWidth = 119; // Default console width for 16 font size
 const int _frameHeight = 29; // Default console height for 16 font size
@@ -14,7 +15,7 @@ int main(void)
 {
     // Data setup
     srand((unsigned)time(NULL));
-    float timeToSleep = (1.0 / _fps) * 1000;   // Time between frames
+    float _timeToSleep = (1.0 / _fps) * 1000;   // Time between frames
     int _pillarCount = (_frameWidth / 20) + 2; // Number of pillars
     PLAYER _player = {_frameHeight / 2, 0};    // Player data
     SCORE _playerScore = {0};                  // Player score
@@ -53,18 +54,21 @@ int main(void)
         // Hides the console cursor, resets the console cursor and displays the frame
         SetConsoleCursorInfo(hStdOut, &curInfo);
         SetConsoleCursorPosition(hStdOut, startPosition);
-        DisplayFrame(_frame, _frameHeight); // Renders the frame
+        DisplayFrame(_frame, _frameHeight);
 
         // Sleep to delay the frame
-        _playerScore.timeSurvived += 0.033;
-        Sleep(timeToSleep); // A rough estimate, since it takes time to render frame it's not perfect but it's ok
+        _playerScore.timeSurvived += 1.0 / _fps;
+        Sleep(_timeToSleep); // A rough estimate, since it takes time to render frame it's not perfect but it's ok
     }
 
+    // Free memory
     FreeFrameMemory(_frame, _frameHeight);
     free(_pillars);
-    
+
+    // Saves users score to score.txt
     SaveUserScore("score.txt", &_playerScore);
 
+    // Game over screen, have to make it look a bit nicer
     system("cls");
     printf(" Game over! Press ENTER to exit...");
     getchar();

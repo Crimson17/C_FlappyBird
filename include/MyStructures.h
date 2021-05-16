@@ -1,7 +1,7 @@
 #ifndef MYSTRUCTURES_H
 #define MYSTRUCTURES_H
 
-// Player...
+// Player properties
 typedef struct Player
 {
     float position;
@@ -16,7 +16,7 @@ typedef struct Score
     float timeSurvived;
 } SCORE;
 
-// Pillar...
+// Pillar properties
 typedef struct Pillar
 {
     int x;
