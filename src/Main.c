@@ -62,6 +62,7 @@ int main(void)
 
     FreeFrameMemory(_frame, _frameHeight);
     free(_pillars);
+    
     SaveUserScore("score.txt", &_playerScore);
 
     system("cls");
