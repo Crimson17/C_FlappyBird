@@ -28,7 +28,7 @@ char **AllocateFrameMemory(int frameWidth, int frameHeight, PILLAR *pillars)
     }
     for (int i = 0; i < frameHeight; i++)
     {
-        *(matrix + i) = (char *)calloc(frameWidth + 2, sizeof(char));   // + 2 for the '\n' and '\0'
+        *(matrix + i) = (char *)calloc(frameWidth + 2, sizeof(char)); // + 2 for the '\n' and '\0'
         if (*(matrix + i) == NULL)
         {
             free(pillars);
@@ -76,7 +76,7 @@ void Input(PLAYER *player, SCORE *score)
         }
         else if (c == 27)
         {
-            globalRunning = 0;
+            _globalRunning = 0;
         }
     }
 }
@@ -186,12 +186,12 @@ void SetPlayer(char **frame, int frameWidth, int frameHeight, PLAYER *player)
         }
         else
         {
-            globalRunning = 0;
+            _globalRunning = 0;
         }
     }
     else
     {
-        globalRunning = 0;
+        _globalRunning = 0;
     }
 }
 

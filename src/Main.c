@@ -6,9 +6,9 @@
 #include "..\include\MyStructures.h"
 
 const int _fps = 15;
-const int _frameWidth = 119;    // Default console width for 16 font size
-const int _frameHeight = 29;    // Default console height for 16 font size
-const float _gravity = 30;      // Player gravity
+const int _frameWidth = 119; // Default console width for 16 font size
+const int _frameHeight = 29; // Default console height for 16 font size
+const float _gravity = 30;   // Player gravity
 
 int main(void)
 {
@@ -18,7 +18,7 @@ int main(void)
     int _pillarCount = (_frameWidth / 20) + 2; // Number of pillars
     PLAYER _player = {_frameHeight / 2, 0};    // Player data
     SCORE _playerScore = {0};                  // Player score
-    globalRunning = 1;                         // Game loop condition
+    _globalRunning = 1;                         // Game loop condition
 
     // Memory allocation
     PILLAR *_pillars = AllocatePillarMemory(_pillarCount);
@@ -36,7 +36,7 @@ int main(void)
     SetConsoleCursorInfo(hStdOut, &curInfo);
 
     // Game loop
-    while (globalRunning)
+    while (_globalRunning)
     {
         // Handle the input
         Input(&_player, &_playerScore);

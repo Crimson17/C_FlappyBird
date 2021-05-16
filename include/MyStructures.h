@@ -24,6 +24,6 @@ typedef struct Pillar
 } PILLAR;
 
 // Game loop condition
-int globalRunning;
+int _globalRunning;
 
 #endif
