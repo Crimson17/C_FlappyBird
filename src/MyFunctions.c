@@ -140,7 +140,6 @@ void SetPillars(char **frame, int frameWidth, int frameHeight, PILLAR *pillars, 
         // Generates upper pillar
         for (int y = 0; y < ((pillars + i)->y - 2); y++)
         {
-
             int xLen = y < ((pillars + i)->y - 4) ? (pillars + i)->x + 3 : (pillars + i)->x + 4;
             int xStart = y < ((pillars + i)->y - 4) ? (pillars + i)->x - 1 : (pillars + i)->x - 2;
             for (int x = xStart; x < xLen; x++)
