@@ -1,7 +1,9 @@
-#include "..\include\MyStructures.h"
-
 #ifndef MYFUNCTIONS_H
 #define MYFUNCTIONS_H
+
+#include "../include/MyStructures.h"
+
+void Game(const int frameWidth, const int frameHeight, const int fps, const float gravity);
 
 // Memory functions
 PILLAR *AllocatePillarMemory(int pillarCount);

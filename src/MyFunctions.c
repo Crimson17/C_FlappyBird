@@ -3,8 +3,69 @@
 #include <time.h>
 #include <math.h>
 #include <conio.h>
-#include "..\include\MyFunctions.h"
-#include "..\include\MyStructures.h"
+#include <windows.h>
+#include "../include/MyFunctions.h"
+#include "../include/MyStructures.h"
+
+void Game(const int frameWidth, const int frameHeight, const int fps, const float gravity)
+{
+    // Data setup
+    float _timeToSleep = (1.0 / fps) * 1000;  // Time between frames
+    int _pillarCount = (frameWidth / 20) + 2; // Number of pillars
+    PLAYER _player = {frameHeight / 2, 0};    // Player data
+    SCORE _playerScore = {0};                 // Player score
+    _globalRunning = 1;                       // Game loop condition
+
+    // Memory allocation
+    PILLAR *_pillars = AllocatePillarMemory(_pillarCount);
+    char **_frame = AllocateFrameMemory(frameWidth, frameHeight, _pillars);
+
+    // Sets all pillars to the right in the default configuration
+    PillarConstructor(_pillars, _pillarCount, frameWidth, frameHeight);
+
+    // Console setup
+    HANDLE hStdOut = GetStdHandle(STD_OUTPUT_HANDLE);
+    COORD startPosition = {0, 0};
+    CONSOLE_CURSOR_INFO curInfo;
+    GetConsoleCursorInfo(hStdOut, &curInfo);
+    curInfo.bVisible = FALSE;
+    SetConsoleCursorInfo(hStdOut, &curInfo);
+
+    // Prepare screen for rendering
+    system("cls");
+
+    // Game loop
+    while (_globalRunning)
+    {
+        // Handle the input
+        Input(&_player, &_playerScore);
+
+        // Cleares frame data
+        ClearFrame(_frame, frameWidth, frameHeight);
+
+        // Frame constructors
+        PillarLogic(_pillars, _pillarCount, frameHeight, frameWidth, &_playerScore); // Generates the pillars
+        SetPillars(_frame, frameWidth, frameHeight, _pillars, _pillarCount);         // Builds pillas to the frame
+        UpdatePlayerPhysics(&_player, gravity, fps);                                 // Updates player physics
+        SetPlayer(_frame, frameWidth, frameHeight, &_player);                        // Builds player to the frame
+
+        // Hides the console cursor, resets the console cursor and displays the frame
+        SetConsoleCursorInfo(hStdOut, &curInfo);
+        SetConsoleCursorPosition(hStdOut, startPosition);
+        DisplayFrame(_frame, frameHeight);
+
+        // Sleep to delay the frame
+        _playerScore.timeSurvived += 1.0 / fps;
+        Sleep(_timeToSleep); // A rough estimate, since it takes time to render frame it's not perfect but it's ok
+    }
+
+    // Free memory
+    FreeFrameMemory(_frame, frameHeight);
+    free(_pillars);
+
+    // Saves users score to score.txt
+    SaveUserScore("score.txt", &_playerScore);
+}
 
 // Allocate memory for the pillars
 PILLAR *AllocatePillarMemory(int pillarCount)
@@ -62,10 +123,10 @@ void PillarConstructor(PILLAR *pillars, int pillarCount, int frameWidth, int fra
 // Handles the keyboard input (SPACEBAR)
 void Input(PLAYER *player, SCORE *score)
 {
-    if (kbhit())
+    if (_kbhit())
     {
-        char c;
-        while (kbhit())
+        char c = '\0';
+        while (_kbhit())
         {
             c = _getch();
         }
@@ -115,11 +176,11 @@ int PointInFrame(int frameWidth, int frameHeight, int x, int y)
 void PillarLogic(PILLAR *pillars, int pillarCount, int frameHeight, int frameWidth, SCORE *score)
 {
     for (int i = 0; i < pillarCount; i++)
-    {   
+    {
         // Pillar movement
         (pillars + i)->x--;
         // Pillar teleportation
-        if ((pillars + i)->x == -4) 
+        if ((pillars + i)->x == -4)
         {
             (pillars + i)->x = frameWidth + 22;
             (pillars + i)->y = 5 + (float)rand() / RAND_MAX * (frameHeight - 10);

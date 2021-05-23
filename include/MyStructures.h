@@ -4,23 +4,24 @@
 // Player properties
 typedef struct Player
 {
-    float position;
-    float velocity;
+	float position;
+	float velocity;
 } PLAYER;
 
 // Players score
 typedef struct Score
 {
-    int spaceCounter;
-    int pillarsPassed;
-    float timeSurvived;
+	char *playerName;
+	int spaceCounter;
+	int pillarsPassed;
+	float timeSurvived;
 } SCORE;
 
 // Pillar properties
 typedef struct Pillar
 {
-    int x;
-    int y;
+	int x;
+	int y;
 } PILLAR;
 
 // Game loop condition
