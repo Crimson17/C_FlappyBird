@@ -14,6 +14,8 @@ int main(void)
 {
     srand((unsigned)time(NULL));
 
+    NewPlayer(_frameWidth, _frameHeight);
+    system("cls");
     Menu(_frameWidth, _frameHeight, _fps, _gravity);
 
     return 0;

@@ -29,6 +29,7 @@ void UpdatePlayerPhysics(PLAYER *player, float gravity, int fps);
 void SetPlayer(char **frame, int frameWidth, int frameHeight, PLAYER *player);
 
 // Score function
+void NewPlayer(int frameWidth, int frameHeight);
 void SaveUserScore(SCORE *data);
 
 #endif

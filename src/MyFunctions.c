@@ -12,7 +12,7 @@ void Menu(const int frameWidth, const int frameHeight, const int fps, const floa
     int menuDecision = -1;
     int menuCursor = 0;
     char keyboardInput = 0;
-    char menuString[3][13];
+    char menuString[4][13];
 
     // Console setup
     HANDLE hStdOut = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -21,23 +21,32 @@ void Menu(const int frameWidth, const int frameHeight, const int fps, const floa
     curInfo.bVisible = FALSE;
     SetConsoleCursorInfo(hStdOut, &curInfo);
 
-    while (menuDecision != 2)
+    // Start loop until spacebar or enter
+    while (menuDecision != 3)
     {
         switch (menuDecision)
         {
         case 0:
-            // ChoosePlayer();
+            // Start the game
             Game(frameWidth, frameHeight, fps, gravity);
             menuDecision = -1;
             system("cls");
             break;
         case 1:
+            NewPlayer(frameWidth, frameHeight);
+            menuDecision = -1;
+            system("cls");
+            break;
+        case 2:
             // SortScores();
             // PrintScores();
             menuDecision = -1;
             system("cls");
             break;
         default:
+            // Show who's logged in
+            SetConsoleCursorPosition(hStdOut, (COORD){0, 0});
+            printf("Logged in as: %s", _playerName);
             /* The most important part... */
             SetConsoleCursorPosition(hStdOut, (COORD){frameWidth / 2 - 27, 4});
             printf("    ________                           ____  _          __ ");
@@ -60,7 +69,7 @@ void Menu(const int frameWidth, const int frameHeight, const int fps, const floa
                 // Hide cursor (just in case it becomes visible again)
                 SetConsoleCursorInfo(hStdOut, &curInfo);
 
-                // Get keyboard input
+                // Get keyboard input while chars are stored in the buffer
                 while (_kbhit())
                 {
                     keyboardInput = _getch();
@@ -72,7 +81,7 @@ void Menu(const int frameWidth, const int frameHeight, const int fps, const floa
                     menuCursor--;
                     keyboardInput = 0;
                 }
-                else if (keyboardInput == 80 && menuCursor < 2)
+                else if (keyboardInput == 80 && menuCursor < 3)
                 {
                     menuCursor++;
                     keyboardInput = 0;
@@ -80,8 +89,9 @@ void Menu(const int frameWidth, const int frameHeight, const int fps, const floa
 
                 // Reset the menu strings
                 strcpy(menuString[0], "   Play!   \n");
-                strcpy(menuString[1], "   Score   \n");
-                strcpy(menuString[2], "   Quit!   \n");
+                strcpy(menuString[1], "   Relog   \n");
+                strcpy(menuString[2], "   Score   \n");
+                strcpy(menuString[3], "   Quit!   \n");
 
                 // Update the menu strings
                 menuString[menuCursor][0] = '>';
@@ -90,12 +100,12 @@ void Menu(const int frameWidth, const int frameHeight, const int fps, const floa
                 menuString[menuCursor][10] = '<';
 
                 // Display the menu
-                SetConsoleCursorPosition(hStdOut, (COORD){frameWidth / 2 - 6, frameHeight / 2 - 1});
-                printf("%s", menuString[0]);
-                SetConsoleCursorPosition(hStdOut, (COORD){frameWidth / 2 - 6, frameHeight / 2});
-                printf("%s", menuString[1]);
-                SetConsoleCursorPosition(hStdOut, (COORD){frameWidth / 2 - 6, frameHeight / 2 + 1});
-                printf("%s", menuString[2]);
+
+                for (int i = 0; i < 4; i++)
+                {
+                    SetConsoleCursorPosition(hStdOut, (COORD){(frameWidth / 2) - 6, (frameHeight / 2) + (i - 1)});
+                    printf("%s", menuString[i]);
+                }
             }
             menuDecision = menuCursor;
             system("cls");
@@ -128,10 +138,8 @@ void Game(const int frameWidth, const int frameHeight, const int fps, const floa
     curInfo.bVisible = FALSE;
     SetConsoleCursorInfo(hStdOut, &curInfo);
 
-    // Prepare screen for rendering
-    system("cls");
-
     // Game loop
+    system("cls");
     while (_globalRunning)
     {
         // Handle the input
@@ -352,6 +360,23 @@ void SetPlayer(char **frame, int frameWidth, int frameHeight, PLAYER *player)
     {
         _globalRunning = 0;
     }
+}
+
+// Let user enter his/her name
+void NewPlayer(int frameWidth, int frameHeight)
+{
+    system("cls");
+    // Console setup
+    HANDLE hStdOut = GetStdHandle(STD_OUTPUT_HANDLE);
+    CONSOLE_CURSOR_INFO curInfo;
+    GetConsoleCursorInfo(hStdOut, &curInfo);
+    curInfo.bVisible = FALSE;
+    SetConsoleCursorInfo(hStdOut, &curInfo);
+
+    // Set cursor to the middle of the screen and let user enter his name
+    SetConsoleCursorPosition(hStdOut, (COORD){frameWidth / 2 - 17, frameHeight / 2 - 1});
+    printf("Enter your name: ");
+    fgets(_playerName, 18, stdin);
 }
 
 // Saves players score after the game is finished!
