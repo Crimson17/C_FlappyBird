@@ -35,10 +35,24 @@ void Menu(const int frameWidth, const int frameHeight, const int fps, const floa
             // SortScores();
             // PrintScores();
             menuDecision = -1;
+            system("cls");
             break;
         default:
-            keyboardInput = 0;
+            /* The most important part... */
+            SetConsoleCursorPosition(hStdOut, (COORD){frameWidth / 2 - 35, 4});
+            printf("####   #        #     ####   ####   #     #       ####   #  ####   ##  ");
+            SetConsoleCursorPosition(hStdOut, (COORD){frameWidth / 2 - 35, 5});
+            printf("#      #      #   #   #   #  #   #   #   #        #   #  #  #   #  #  #");
+            SetConsoleCursorPosition(hStdOut, (COORD){frameWidth / 2 - 35, 6});
+            printf("###    #     #######  ####   ####      #          ####   #  ####   #  #");
+            SetConsoleCursorPosition(hStdOut, (COORD){frameWidth / 2 - 35, 7});
+            printf("#      #     #     #  #      #         #          #   #  #  #  #   #  #");
+            SetConsoleCursorPosition(hStdOut, (COORD){frameWidth / 2 - 35, 8});
+            printf("#      ####  #     #  #      #         #          ####   #  #   #  ##  ");
+            /* drawing the logo ofc ;) */
 
+            // Loop until the user chooses an option
+            keyboardInput = 0;
             while (keyboardInput != 13)
             {
                 // Hide cursor (just in case it becomes visible again)
@@ -82,6 +96,7 @@ void Menu(const int frameWidth, const int frameHeight, const int fps, const floa
                 printf("%s", menuString[2]);
             }
             menuDecision = menuCursor;
+            system("cls");
             break;
         }
     }
