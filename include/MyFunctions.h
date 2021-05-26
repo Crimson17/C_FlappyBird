@@ -29,6 +29,6 @@ void UpdatePlayerPhysics(PLAYER *player, float gravity, int fps);
 void SetPlayer(char **frame, int frameWidth, int frameHeight, PLAYER *player);
 
 // Score function
-void SaveUserScore(const char *fileName, SCORE *data);
+void SaveUserScore(SCORE *data);
 
 #endif

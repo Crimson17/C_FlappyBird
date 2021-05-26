@@ -161,7 +161,7 @@ void Game(const int frameWidth, const int frameHeight, const int fps, const floa
     free(_pillars);
 
     // Saves users score to score.txt
-    SaveUserScore("score.txt", &_playerScore);
+    SaveUserScore(&_playerScore);
 }
 
 // Allocate memory for the pillars
@@ -355,15 +355,15 @@ void SetPlayer(char **frame, int frameWidth, int frameHeight, PLAYER *player)
 }
 
 // Saves players score after the game is finished!
-void SaveUserScore(const char *fileName, SCORE *data)
+void SaveUserScore(SCORE *userScore)
 {
     // Open file stream
-    FILE *fp = fopen(fileName, "r");
+    FILE *fp = fopen("scores.bin", "rb");
     // Check if file exists
     if (fp == NULL)
     {
         // Generate new if it doesn't exist
-        fp = fopen(fileName, "w");
+        fp = fopen("scores.bin", "wb");
         if (fp == NULL)
         {
             exit(-1);
@@ -375,12 +375,22 @@ void SaveUserScore(const char *fileName, SCORE *data)
         fclose(fp);
     }
     // Open file for appending
-    fp = fopen(fileName, "a");
+    fp = fopen("scores.bin", "ab");
     if (fp == NULL)
     {
         exit(-1);
     }
-    // Save score to file and close the file stream
-    fprintf(fp, "Pillars passed: %d, Spacebar presses: %d, Time alive: %.2f seconds\n", data->pillarsPassed, data->spaceCounter, data->timeSurvived);
+
+    // Move to the end of the file
+    fseek(fp, 0, SEEK_END);
+    // Save player name
+    fwrite(_playerName, sizeof(char), sizeof(_playerName), fp);
+    // Save pillars passed
+    fwrite(&userScore->pillarsPassed, sizeof(int), 1, fp);
+    // Save spacebar presses
+    fwrite(&userScore->spaceCounter, sizeof(int), 1, fp);
+    // Save time survived
+    fwrite(&userScore->timeSurvived, sizeof(float), 1, fp);
+    // Close the file stream
     fclose(fp);
 }

@@ -11,7 +11,6 @@ typedef struct Player
 // Players score
 typedef struct Score
 {
-	char *playerName;
 	int spaceCounter;
 	int pillarsPassed;
 	float timeSurvived;
@@ -26,5 +25,6 @@ typedef struct Pillar
 
 // Game loop condition
 int _globalRunning;
+char _playerName[18];
 
 #endif
