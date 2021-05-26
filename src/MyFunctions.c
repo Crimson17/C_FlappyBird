@@ -39,16 +39,18 @@ void Menu(const int frameWidth, const int frameHeight, const int fps, const floa
             break;
         default:
             /* The most important part... */
-            SetConsoleCursorPosition(hStdOut, (COORD){frameWidth / 2 - 35, 4});
-            printf("####   #        #     ####   ####   #     #       ####   #  ####   ##  ");
-            SetConsoleCursorPosition(hStdOut, (COORD){frameWidth / 2 - 35, 5});
-            printf("#      #      #   #   #   #  #   #   #   #        #   #  #  #   #  #  #");
-            SetConsoleCursorPosition(hStdOut, (COORD){frameWidth / 2 - 35, 6});
-            printf("###    #     #######  ####   ####      #          ####   #  ####   #  #");
-            SetConsoleCursorPosition(hStdOut, (COORD){frameWidth / 2 - 35, 7});
-            printf("#      #     #     #  #      #         #          #   #  #  #  #   #  #");
-            SetConsoleCursorPosition(hStdOut, (COORD){frameWidth / 2 - 35, 8});
-            printf("#      ####  #     #  #      #         #          ####   #  #   #  ##  ");
+            SetConsoleCursorPosition(hStdOut, (COORD){frameWidth / 2 - 27, 4});
+            printf("    ________                           ____  _          __ ");
+            SetConsoleCursorPosition(hStdOut, (COORD){frameWidth / 2 - 27, 5});
+            printf("   / ____/ /___ _____  ____  __  __   / __ )(_)________/ / ");
+            SetConsoleCursorPosition(hStdOut, (COORD){frameWidth / 2 - 27, 6});
+            printf("  / /_  / / __ `/ __ \\/ __ \\/ / / /  / __  / / ___/ __  /");
+            SetConsoleCursorPosition(hStdOut, (COORD){frameWidth / 2 - 27, 7});
+            printf(" / __/ / / /_/ / /_/ / /_/ / /_/ /  / /_/ / / /  / /_/ /   ");
+            SetConsoleCursorPosition(hStdOut, (COORD){frameWidth / 2 - 27, 8});
+            printf("/_/   /_/\\__,_/ .___/ .___/\\__, /  /_____/_/_/   \\__,_/ ");
+            SetConsoleCursorPosition(hStdOut, (COORD){frameWidth / 2 - 27, 9});
+            printf("             /_/   /_/    /____/                           ");
             /* drawing the logo ofc ;) */
 
             // Loop until the user chooses an option
