@@ -55,7 +55,7 @@ void Menu(const int frameWidth, const int frameHeight, const int fps, const floa
 
             // Loop until the user chooses an option
             keyboardInput = 0;
-            while (keyboardInput != 13)
+            while (keyboardInput != 13 && keyboardInput != 32)
             {
                 // Hide cursor (just in case it becomes visible again)
                 SetConsoleCursorInfo(hStdOut, &curInfo);

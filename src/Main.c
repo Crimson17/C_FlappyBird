@@ -7,8 +7,8 @@
 // Game properties
 const int _frameWidth = 119; // Default console width for 16 font size (shouldn't be less than this default value)
 const int _frameHeight = 29; // Default console height for 16 font size (shouldn't be less than this default value)
-const int _fps = 15;         // Game fps
-const float _gravity = 30;   // Player gravity
+const int _fps = 15;         // Game fps (15 actually works really good)
+const float _gravity = 30;   // Player gravity (10 is too slow)
 
 int main(void)
 {
