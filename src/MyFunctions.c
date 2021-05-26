@@ -7,6 +7,85 @@
 #include "../include/MyFunctions.h"
 #include "../include/MyStructures.h"
 
+void Menu(const int frameWidth, const int frameHeight, const int fps, const float gravity){
+    int menuDecision = -1;
+    int menuCursor = 0;
+    char keyboardInput = 0;
+    char menuString[3][13];
+
+    // Console setup
+    HANDLE hStdOut = GetStdHandle(STD_OUTPUT_HANDLE);
+    CONSOLE_CURSOR_INFO curInfo;
+    GetConsoleCursorInfo(hStdOut, &curInfo);
+    curInfo.bVisible = FALSE;
+    SetConsoleCursorInfo(hStdOut, &curInfo);
+
+    while (menuDecision != 2)
+    {
+        switch (menuDecision)
+        {
+        case 0:
+            // ChoosePlayer();
+            Game(frameWidth, frameHeight, fps, gravity);
+            menuDecision = -1;
+            system("cls");
+            break;
+        case 1:
+            // SortScores();
+            // PrintScores();
+            menuDecision = -1;
+            break;
+        default:
+            keyboardInput = 0;
+
+            while (keyboardInput != 13)
+            {
+                // Hide cursor (just in case it becomes visible again)
+                SetConsoleCursorInfo(hStdOut, &curInfo);
+
+                // Get keyboard input
+                while (_kbhit())
+                {
+                    keyboardInput = _getch();
+                }
+
+                // Check keyboard input
+                if (keyboardInput == 72 && menuCursor > 0)
+                {
+                    menuCursor--;
+                    keyboardInput = 0;
+                }
+                else if (keyboardInput == 80 && menuCursor < 2)
+                {
+                    menuCursor++;
+                    keyboardInput = 0;
+                }
+
+                // Reset the menu strings
+                strcpy(menuString[0], "   Play!   \n");
+                strcpy(menuString[1], "   Score   \n");
+                strcpy(menuString[2], "   Quit!   \n");
+
+                // Update the menu strings
+                menuString[menuCursor][0] = '>';
+                menuString[menuCursor][1] = '>';
+                menuString[menuCursor][9] = '<';
+                menuString[menuCursor][10] = '<';
+
+                // Display the menu
+                SetConsoleCursorPosition(hStdOut, (COORD){frameWidth / 2 - 6, frameHeight / 2 - 1});
+                printf("%s", menuString[0]);
+                SetConsoleCursorPosition(hStdOut, (COORD){frameWidth / 2 - 6, frameHeight / 2});
+                printf("%s", menuString[1]);
+                SetConsoleCursorPosition(hStdOut, (COORD){frameWidth / 2 - 6, frameHeight / 2 + 1});
+                printf("%s", menuString[2]);
+            }
+            menuDecision = menuCursor;
+            break;
+        }
+    }
+}
+
 void Game(const int frameWidth, const int frameHeight, const int fps, const float gravity)
 {
     // Data setup
@@ -125,12 +204,12 @@ void Input(PLAYER *player, SCORE *score)
 {
     if (_kbhit())
     {
-        char c = '\0';
+        char input = '\0';
         while (_kbhit())
         {
-            c = _getch();
+            input = _getch();
         }
-        if (c == 32)
+        if (input == 32)
         {
             player->velocity -= 10;
             score->spaceCounter++;

@@ -3,6 +3,7 @@
 
 #include "../include/MyStructures.h"
 
+void Menu(const int frameWidth, const int frameHeight, const int fps, const float gravity);
 void Game(const int frameWidth, const int frameHeight, const int fps, const float gravity);
 
 // Memory functions
