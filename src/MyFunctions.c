@@ -7,7 +7,8 @@
 #include "../include/MyFunctions.h"
 #include "../include/MyStructures.h"
 
-void Menu(const int frameWidth, const int frameHeight, const int fps, const float gravity){
+void Menu(const int frameWidth, const int frameHeight, const int fps, const float gravity)
+{
     int menuDecision = -1;
     int menuCursor = 0;
     char keyboardInput = 0;
