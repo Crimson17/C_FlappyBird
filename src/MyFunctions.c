@@ -163,7 +163,7 @@ void Game(const int frameWidth, const int frameHeight, const int fps, const floa
     FreeFrameMemory(_frame, frameHeight);
     free(_pillars);
 
-    // Saves users score to score.txt
+    // Saves users score to scores.bin
     SaveUserScore(&_playerScore);
 }
 
