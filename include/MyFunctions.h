@@ -3,6 +3,7 @@
 
 #include "../include/MyStructures.h"
 
+// Game functions
 void Menu(const int frameWidth, const int frameHeight, const int fps, const float gravity);
 void Game(const int frameWidth, const int frameHeight, const int fps, const float gravity);
 
@@ -31,5 +32,7 @@ void SetPlayer(char **frame, int frameWidth, int frameHeight, PLAYER *player);
 // Score function
 void NewPlayer(int frameWidth, int frameHeight);
 void SaveUserScore(SCORE *data);
+void HandleScores(int frameWidth, int frameHeight);
+void SearchForPlayer(int frameWidth, int frameHeight);
 
 #endif

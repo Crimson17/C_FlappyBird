@@ -1,9 +1,11 @@
+//#define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 #include <math.h>
 #include <conio.h>
 #include <windows.h>
+#include <string.h>
 #include "../include/MyFunctions.h"
 #include "../include/MyStructures.h"
 
@@ -12,17 +14,11 @@ void Menu(const int frameWidth, const int frameHeight, const int fps, const floa
     int menuDecision = -1;
     int menuCursor = 0;
     char keyboardInput = 0;
-    char menuString[4][13];
-
-    // Console setup
-    HANDLE hStdOut = GetStdHandle(STD_OUTPUT_HANDLE);
-    CONSOLE_CURSOR_INFO curInfo;
-    GetConsoleCursorInfo(hStdOut, &curInfo);
-    curInfo.bVisible = FALSE;
-    SetConsoleCursorInfo(hStdOut, &curInfo);
+    char menuString[5][13];
 
     // Start loop until spacebar or enter
-    while (menuDecision != 3)
+    system("cls");
+    while (menuDecision != 4)
     {
         switch (menuDecision)
         {
@@ -33,13 +29,20 @@ void Menu(const int frameWidth, const int frameHeight, const int fps, const floa
             system("cls");
             break;
         case 1:
+            // Load new player name
             NewPlayer(frameWidth, frameHeight);
             menuDecision = -1;
             system("cls");
             break;
         case 2:
-            // SortScores();
-            // PrintScores();
+            // Sort and print scores
+            HandleScores(frameWidth, frameHeight);
+            menuDecision = -1;
+            system("cls");
+            break;
+        case 3:
+            // Search and print specific player
+            SearchForPlayer(frameWidth, frameHeight);
             menuDecision = -1;
             system("cls");
             break;
@@ -81,7 +84,7 @@ void Menu(const int frameWidth, const int frameHeight, const int fps, const floa
                     menuCursor--;
                     keyboardInput = 0;
                 }
-                else if (keyboardInput == 80 && menuCursor < 3)
+                else if (keyboardInput == 80 && menuCursor < 4)
                 {
                     menuCursor++;
                     keyboardInput = 0;
@@ -91,7 +94,8 @@ void Menu(const int frameWidth, const int frameHeight, const int fps, const floa
                 strcpy(menuString[0], "   Play!   \n");
                 strcpy(menuString[1], "   Relog   \n");
                 strcpy(menuString[2], "   Score   \n");
-                strcpy(menuString[3], "   Quit!   \n");
+                strcpy(menuString[3], "   Find!   \n");
+                strcpy(menuString[4], "   Quit!   \n");
 
                 // Update the menu strings
                 menuString[menuCursor][0] = '>';
@@ -100,8 +104,7 @@ void Menu(const int frameWidth, const int frameHeight, const int fps, const floa
                 menuString[menuCursor][10] = '<';
 
                 // Display the menu
-
-                for (int i = 0; i < 4; i++)
+                for (int i = 0; i < 5; i++)
                 {
                     SetConsoleCursorPosition(hStdOut, (COORD){(frameWidth / 2) - 6, (frameHeight / 2) + (i - 1)});
                     printf("%s", menuString[i]);
@@ -130,14 +133,6 @@ void Game(const int frameWidth, const int frameHeight, const int fps, const floa
     // Sets all pillars to the right in the default configuration
     PillarConstructor(_pillars, _pillarCount, frameWidth, frameHeight);
 
-    // Console setup
-    HANDLE hStdOut = GetStdHandle(STD_OUTPUT_HANDLE);
-    COORD startPosition = {0, 0};
-    CONSOLE_CURSOR_INFO curInfo;
-    GetConsoleCursorInfo(hStdOut, &curInfo);
-    curInfo.bVisible = FALSE;
-    SetConsoleCursorInfo(hStdOut, &curInfo);
-
     // Game loop
     system("cls");
     while (_globalRunning)
@@ -156,7 +151,7 @@ void Game(const int frameWidth, const int frameHeight, const int fps, const floa
 
         // Hides the console cursor, resets the console cursor and displays the frame
         SetConsoleCursorInfo(hStdOut, &curInfo);
-        SetConsoleCursorPosition(hStdOut, startPosition);
+        SetConsoleCursorPosition(hStdOut, (COORD){0, 0});
         DisplayFrame(_frame, frameHeight);
 
         // Sleep to delay the frame
@@ -366,17 +361,20 @@ void SetPlayer(char **frame, int frameWidth, int frameHeight, PLAYER *player)
 void NewPlayer(int frameWidth, int frameHeight)
 {
     system("cls");
-    // Console setup
-    HANDLE hStdOut = GetStdHandle(STD_OUTPUT_HANDLE);
-    CONSOLE_CURSOR_INFO curInfo;
-    GetConsoleCursorInfo(hStdOut, &curInfo);
-    curInfo.bVisible = FALSE;
-    SetConsoleCursorInfo(hStdOut, &curInfo);
 
     // Set cursor to the middle of the screen and let user enter his name
     SetConsoleCursorPosition(hStdOut, (COORD){frameWidth / 2 - 17, frameHeight / 2 - 1});
     printf("Enter your name: ");
     fgets(_playerName, 18, stdin);
+    // Removing \n
+    for (int i = 0; *(_playerName + i) != '\0'; i++)
+    {
+        if (*(_playerName + i) == '\n')
+        {
+            *(_playerName + i) = '\0';
+            break;
+        }
+    }
 }
 
 // Saves players score after the game is finished!
@@ -409,7 +407,7 @@ void SaveUserScore(SCORE *userScore)
     // Move to the end of the file
     fseek(fp, 0, SEEK_END);
     // Save player name
-    fwrite(_playerName, sizeof(char), sizeof(_playerName), fp);
+    fwrite(_playerName, sizeof(char), 18, fp);
     // Save pillars passed
     fwrite(&userScore->pillarsPassed, sizeof(int), 1, fp);
     // Save spacebar presses
@@ -418,4 +416,164 @@ void SaveUserScore(SCORE *userScore)
     fwrite(&userScore->timeSurvived, sizeof(float), 1, fp);
     // Close the file stream
     fclose(fp);
+}
+
+void HandleScores(int frameWidth, int frameHeight)
+{
+    // Count scores
+    FILE *fp = fopen("scores.bin", "rb");
+    if (fp == NULL)
+    {
+        SetConsoleCursorPosition(hStdOut, (COORD){frameWidth / 2 - 12, frameHeight / 2});
+        printf("No score records found!");
+        _getch();
+        return;
+    }
+    fseek(fp, 0, SEEK_END);
+    int scoresCounter = ftell(fp) / 30;
+
+    // Allocate memory
+    SCORE *loadedScores = (SCORE *)calloc(scoresCounter, sizeof(SCORE));
+    if (loadedScores == NULL)
+    {
+        fclose(fp);
+        exit(-1);
+    }
+
+    // Read from file to temp memory
+    for (int i = 0; i < scoresCounter; i++)
+    {
+        fseek(fp, 30 * i, SEEK_SET);
+        fread((loadedScores + i)->playerName, sizeof(char), 18, fp);
+        fseek(fp, 30 * i + 18, SEEK_SET);
+        fread(&(loadedScores + i)->pillarsPassed, sizeof(int), 1, fp);
+        fseek(fp, 30 * i + 22, SEEK_SET);
+        fread(&(loadedScores + i)->spaceCounter, sizeof(int), 1, fp);
+        fseek(fp, 30 * i + 26, SEEK_SET);
+        fread(&(loadedScores + i)->timeSurvived, sizeof(float), 1, fp);
+    }
+    fclose(fp);
+
+    // Sort scores by pillars passed, if they are the same then sort by spacebar presses
+    for (int i = 0; i < scoresCounter; i++)
+    {
+        for (int j = i; j < scoresCounter; j++)
+        {
+            if ((loadedScores + j)->pillarsPassed > (loadedScores + i)->pillarsPassed)
+            {
+                // Replace
+                char tempName[18];
+                strcpy(tempName, (loadedScores + i)->playerName);
+                int tempPillars = (loadedScores + i)->pillarsPassed;
+                int tempSpaces = (loadedScores + i)->spaceCounter;
+                float tempTime = (loadedScores + i)->timeSurvived;
+
+                strcpy((loadedScores + i)->playerName, (loadedScores + j)->playerName);
+                (loadedScores + i)->pillarsPassed = (loadedScores + j)->pillarsPassed;
+                (loadedScores + i)->spaceCounter = (loadedScores + j)->spaceCounter;
+                (loadedScores + i)->timeSurvived = (loadedScores + j)->timeSurvived;
+
+                strcpy((loadedScores + j)->playerName, tempName);
+                (loadedScores + j)->pillarsPassed = tempPillars;
+                (loadedScores + j)->spaceCounter = tempSpaces;
+                (loadedScores + j)->timeSurvived = tempTime;
+            }
+            else if ((loadedScores + j)->pillarsPassed == (loadedScores + i)->pillarsPassed && (loadedScores + j)->spaceCounter < (loadedScores + i)->spaceCounter)
+            {
+                // Replace
+                char tempName[18];
+                strcpy(tempName, (loadedScores + i)->playerName);
+                int tempPillars = (loadedScores + i)->pillarsPassed;
+                int tempSpaces = (loadedScores + i)->spaceCounter;
+                float tempTime = (loadedScores + i)->timeSurvived;
+
+                strcpy((loadedScores + i)->playerName, (loadedScores + j)->playerName);
+                (loadedScores + i)->pillarsPassed = (loadedScores + j)->pillarsPassed;
+                (loadedScores + i)->spaceCounter = (loadedScores + j)->spaceCounter;
+                (loadedScores + i)->timeSurvived = (loadedScores + j)->timeSurvived;
+
+                strcpy((loadedScores + j)->playerName, tempName);
+                (loadedScores + j)->pillarsPassed = tempPillars;
+                (loadedScores + j)->spaceCounter = tempSpaces;
+                (loadedScores + j)->timeSurvived = tempTime;
+            }
+        }
+    }
+
+    // Print scores
+    system("cls");
+    for (int i = 0; i < scoresCounter; i++)
+    {
+        SetConsoleCursorPosition(hStdOut, (COORD){frameWidth / 2 - ((strlen((loadedScores + i)->playerName) + 68) / 2), 2 + i});
+        printf("%d. %s:: pillars passed: %d (spacebar presses: %d, time survived: %.2f)", i + 1, (loadedScores + i)->playerName, (loadedScores + i)->pillarsPassed, (loadedScores + i)->spaceCounter, (loadedScores + i)->timeSurvived);
+    }
+
+    // Free scores memory
+    free(loadedScores);
+    _getch();
+}
+
+void SearchForPlayer(int frameWidth, int frameHeight)
+{
+    char searchName[18];
+    char tempName[18];
+
+    // Count scores
+    FILE *fp = fopen("scores.bin", "rb");
+    if (fp == NULL)
+    {
+        SetConsoleCursorPosition(hStdOut, (COORD){frameWidth / 2 - 12, frameHeight / 2});
+        printf("No score records found!");
+        _getch();
+        return;
+    }
+    fseek(fp, 0, SEEK_END);
+    int scoresCounter = ftell(fp) / 30;
+    int printCounter = 0;
+
+    // Set cursor to the middle of the screen and let user enter his name
+    SetConsoleCursorPosition(hStdOut, (COORD){frameWidth / 2 - 30, frameHeight / 2 - 1});
+    printf("Enter the name to search for: ");
+    fgets(searchName, 18, stdin);
+    // Removing \n
+    for (int i = 0; *(searchName + i) != '\0'; i++)
+    {
+        if (*(searchName + i) == '\n')
+        {
+            *(searchName + i) = '\0';
+            break;
+        }
+    }
+
+    // Go through bin file and print if the names match
+    system("cls");
+    for (int i = 0; i < scoresCounter; i++)
+    {
+        fseek(fp, 30 * i, SEEK_SET);
+        fread(tempName, sizeof(char), 18, fp);
+
+        if (!strcmp(tempName, searchName))
+        {
+            SCORE tempScore = {0};
+            fseek(fp, 30 * i + 18, SEEK_SET);
+            fread(&tempScore.pillarsPassed, sizeof(int), 1, fp);
+            fseek(fp, 30 * i + 22, SEEK_SET);
+            fread(&tempScore.spaceCounter, sizeof(int), 1, fp);
+            fseek(fp, 30 * i + 26, SEEK_SET);
+            fread(&tempScore.timeSurvived, sizeof(float), 1, fp);
+
+            SetConsoleCursorPosition(hStdOut, (COORD){frameWidth / 2 - ((strlen(searchName) + 65) / 2), 2 + printCounter});
+            printf("%s:: pillars passed: %d (spacebar presses: %d, time survived: %.2f)", searchName, tempScore.pillarsPassed, tempScore.spaceCounter, tempScore.timeSurvived);
+            printCounter++;
+        }
+    }
+    // Print this if a specified player is not found
+    if (printCounter == 0)
+    {
+        SetConsoleCursorPosition(hStdOut, (COORD){frameWidth / 2 - 9, frameHeight / 2});
+        printf("Player not found!");
+    }
+    // Close the file stream
+    fclose(fp);
+    _getch();
 }
