@@ -25,12 +25,12 @@ int Pillar::phys(const Size& frameSize, float deltaT) {
 
     // Pillar teleportation
     if (this->x <= -4) {
-        this->x = frameSize.w + 22;
-        this->y = rand() % (frameSize.h - 15) + 5;
+        this->x = frameSize.w + std::abs(this->x) + 30;
+        this->y = rand() % (frameSize.h - 15) + 5.0f;
         this->canPass = true;
     }
     // Checking if the player has passed a pillar
-    else if (this->x <= ((frameSize.w / 4) - 1) && canPass) {
+    else if (this->x <= ((frameSize.w / 4.0f) - 1) && canPass) {
         this->canPass = false;
         return 1;
     }
@@ -49,8 +49,8 @@ void Pillar::draw(const Frame& frame, const Size& frameSize) {
 
     // Drawing the upper pillar
     for (int y = 0; y < (this->y - 2); y++) {
-        int xLen = y < (this->y - 4) ? this->x + 3 : this->x + 4;
-        int xStart = y < (this->y - 4) ? this->x - 1 : this->x - 2;
+        int xLen = int(y < (this->y - 4) ? this->x + 3 : this->x + 4);
+        int xStart = int(y < (this->y - 4) ? this->x - 1 : this->x - 2);
         for (int x = xStart; x < xLen; x++) {
             if (InFrame(x, y, frameSize)) {
                 ((char*)&frame.data[0])[y * frameSize.w + x] = '#';
@@ -59,9 +59,9 @@ void Pillar::draw(const Frame& frame, const Size& frameSize) {
     }
 
     // Drawing the lower pillar
-    for (int y = this->y + 2; y < frameSize.h; y++) {
-        int xLen = y > (this->y + 3) ? this->x + 3 : this->x + 4;
-        int xStart = y > (this->y + 3) ? this->x - 1 : this->x - 2;
+    for (int y = int(this->y + 2); y < frameSize.h; y++) {
+        int xLen = int(y > (this->y + 3) ? this->x + 3 : this->x + 4);
+        int xStart = int(y > (this->y + 3) ? this->x - 1 : this->x - 2);
         for (int x = xStart; x < xLen; x++) {
             if (InFrame(x, y, frameSize)) {
                 ((char*)&frame.data[0])[y * frameSize.w + x] = '#';

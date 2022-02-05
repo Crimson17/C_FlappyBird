@@ -1,5 +1,6 @@
 #pragma once
 
+#include <string>
 #include <conio.h>
 #include <windows.h>
 
@@ -22,6 +23,9 @@ public:
 
 	// Input
 	char input();
+
+	// Title
+	void title(const std::string&);
 
 private:
 	HANDLE handle = nullptr;

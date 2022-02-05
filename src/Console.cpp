@@ -1,7 +1,5 @@
 #include "Console.h"
 
-#include "Size.h"
-
 
 Console::Console() {
 	handle = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -40,4 +38,9 @@ char Console::input() {
 		key = _getch();
 	}
 	return key;
+}
+
+// Updates the console title
+void Console::title(const std::string& data) {
+	SetConsoleTitleA(data.c_str());
 }

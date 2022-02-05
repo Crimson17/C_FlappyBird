@@ -6,8 +6,8 @@ Player::Player() {
 	this->position = 0;
 	this->velocity = 0;
 
-	this->spaceCounter = 0;
-	this->pillarsPassed = 0;
+	this->spaces = 0;
+	this->pillars = 0;
 }
 
 Player::Player(const std::string& name) {
@@ -15,8 +15,8 @@ Player::Player(const std::string& name) {
 	this->position = 0;
 	this->velocity = 0;
 
-	this->spaceCounter = 0;
-	this->pillarsPassed = 0;
+	this->spaces = 0;
+	this->pillars = 0;
 }
 
 // Updates the player physics

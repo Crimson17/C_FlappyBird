@@ -3,7 +3,6 @@
 #include <iostream>
 #include <vector>
 
-#include "Size.h"
 #include "Pillar.h"
 #include "Frame.h"
 #include "Timer.h"
@@ -73,6 +72,7 @@ void Flappy::menu() {
             chosen = -1;
             this->console.clear();
             break;
+
         case 3:
             // Search and print specific player
             //SearchForPlayer(frameWidth, frameHeight);
@@ -158,8 +158,8 @@ void Flappy::game() {
     // Player setup
     this->player.position = this->frameSize.h / 2.0f;
     this->player.velocity = 0;
-    this->player.pillarsPassed = 0;
-    this->player.spaceCounter = 0;
+    this->player.pillars = 0;
+    this->player.spaces = 0;
 
     // Memory allocation
     std::vector<Pillar> pillars((this->frameSize.w / 20) + 2);
@@ -167,8 +167,8 @@ void Flappy::game() {
 
     // Sets all pillars to the right in the default configuration
     for (int i = 0; i < pillars.size(); i++) {
-        pillars[i].x = this->frameSize.w + 2 + (i * 20);
-        pillars[i].y = rand() % (this->frameSize.h - 15) + 5;
+        pillars[i].x = this->frameSize.w + 2.0f + (i * 20);
+        pillars[i].y = rand() % (this->frameSize.h - 15) + 5.0f;
     }
 
     // Game loop
@@ -188,17 +188,20 @@ void Flappy::game() {
 
         // Pillar update
         for (int i = 0; i < pillars.size(); i++) {
-            player.pillarsPassed += pillars[i].phys(frameSize, deltaT);
+            player.pillars += pillars[i].phys(frameSize, deltaT);
             pillars[i].draw(frame, frameSize);
         }
 
         // Player update
         if (key == ' ') {
             player.velocity -= 10;
-            player.spaceCounter++;
+            player.spaces++;
         }
         this->player.phys(20, deltaT);
         running = this->player.draw(frame, this->frameSize);
+
+        // Title update
+        console.title(std::to_string(player.pillars));
 
         // Displaying the frame
         this->console.moveC(0, 0);

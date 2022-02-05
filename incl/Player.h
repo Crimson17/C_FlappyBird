@@ -12,8 +12,8 @@ public:
 	float position;
 	float velocity;
 
-	int spaceCounter;
-	int pillarsPassed;
+	int spaces;
+	int pillars;
 
 	Player();
 	Player(const std::string&);

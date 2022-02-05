@@ -17,9 +17,9 @@ public:
 	float elapsed();
 
 private:
-	float recFreq = 0;
-	LARGE_INTEGER inStartTime = {};
-	LARGE_INTEGER swStartTime = {};
+	float recFreq;
+	LARGE_INTEGER inStartTime;
+	LARGE_INTEGER swStartTime;
 
 	// Stores the pc frequency
 	void storeFreq();

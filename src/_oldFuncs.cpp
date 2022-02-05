@@ -9,11 +9,14 @@
 
 
 // Saves players score after the game is finished!
-void SaveUserScore(SCORE *userScore) {
+void SaveUserScore(SCORE *userScore)
+{
     // Open file stream
     FILE *fp = fopen("scores.bin", "rb");
+
     // Check if file exists
-    if (fp == NULL) {
+    if (fp == NULL) 
+    {
         // Generate new if it doesn't exist
         fp = fopen("scores.bin", "wb");
         if (fp == NULL) {
@@ -21,35 +24,41 @@ void SaveUserScore(SCORE *userScore) {
         }
         fclose(fp);
     }
-    else {
+    else 
+    {
         fclose(fp);
     }
+
     // Open file for appending
     fp = fopen("scores.bin", "ab");
-    if (fp == NULL) {
+    if (fp == NULL)
+    {
         exit(-1);
     }
 
     // Move to the end of the file
     fseek(fp, 0, SEEK_END);
+
     // Save player name
     fwrite(_playerName, sizeof(char), 18, fp);
+
     // Save pillars passed
     fwrite(&userScore->pillarsPassed, sizeof(int), 1, fp);
+
     // Save spacebar presses
     fwrite(&userScore->spaceCounter, sizeof(int), 1, fp);
+
     // Save time survived
     fwrite(&userScore->timeSurvived, sizeof(float), 1, fp);
+
     // Close the file stream
     fclose(fp);
 }
 
-void HandleScores(int frameWidth, int frameHeight)
-{
+void HandleScores(int frameWidth, int frameHeight) {
     // Count scores
     FILE *fp = fopen("scores.bin", "rb");
-    if (fp == NULL)
-    {
+    if (fp == NULL) {
         SetConsoleCursorPosition(hStdOut, { short(frameWidth / 2 - 12), short(frameHeight / 2) });
         printf("No score records found!");
         _getch();
