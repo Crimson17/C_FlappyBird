@@ -10,23 +10,20 @@
 // Returns the console handle
 class Console {
 public:
-	// Constructor
-	Console();
-
 	// Cursor
-	void hideC();
-	void moveC(int, int);
+	static void hideC();
+	static void moveC(int, int);
 
 	// Frame
-	void clear();
-	Size size();
+	static void clear();
+	static Size size();
 
 	// Input
-	char input();
+	static char input();
 
 	// Title
-	void title(const std::string&);
+	static void title(const std::string&);
 
 private:
-	HANDLE handle = nullptr;
+	static HANDLE handle;
 };

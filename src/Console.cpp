@@ -1,22 +1,21 @@
 #include "Console.h"
 
 
-Console::Console() {
-	handle = GetStdHandle(STD_OUTPUT_HANDLE);
-}
+// Getting the console handle
+HANDLE Console::handle = GetStdHandle(STD_OUTPUT_HANDLE);
 
 // Hides the console cursor
 void Console::hideC() {
 	CONSOLE_CURSOR_INFO info = {};
-	GetConsoleCursorInfo(this->handle, &info);
+	GetConsoleCursorInfo(Console::handle, &info);
 	info.bVisible = FALSE;
-	SetConsoleCursorInfo(this->handle, &info);
+	SetConsoleCursorInfo(Console::handle, &info);
 }
 
 // Moves the console cursor
 void Console::moveC(int x, int y) {
 	COORD pos = { short(x), short(y) };
-	SetConsoleCursorPosition(this->handle, pos);
+	SetConsoleCursorPosition(Console::handle, pos);
 }
 
 // Clears the console
@@ -27,7 +26,7 @@ void Console::clear() {
 // Returns the console size
 Size Console::size() {
 	CONSOLE_SCREEN_BUFFER_INFO csbi = {};
-	GetConsoleScreenBufferInfo(this->handle, &csbi);
+	GetConsoleScreenBufferInfo(Console::handle, &csbi);
 	return Size(csbi.srWindow.Right - csbi.srWindow.Left + 1, csbi.srWindow.Bottom - csbi.srWindow.Top + 1);
 }
 

@@ -11,9 +11,6 @@ public:
 	Flappy();
 
 private:
-	// Console
-	Console console;
-
 	// Frame size
 	Size frameSize;
 
@@ -24,4 +21,5 @@ private:
 	void login();
 	void menu();
 	void game();
+	void search();
 };

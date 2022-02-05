@@ -4,13 +4,16 @@
 #include <vector>
 
 #include "Pillar.h"
+#include "Score.h"
 #include "Frame.h"
 #include "Timer.h"
 
 
+static const std::string scoresFile = "scores.bin";
+
 Flappy::Flappy() {
     // Getting the console size
-    this->frameSize = this->console.size();
+    this->frameSize = Console::size();
 
     // Login
     this->login();
@@ -22,18 +25,41 @@ Flappy::Flappy() {
 // Login screen
 void Flappy::login() {
     // Clearing the console
-    this->console.clear();
+    Console::clear();
 
     // Centering the cursor
-    this->console.moveC(this->frameSize.w / 2 - 17, this->frameSize.h / 2 - 1);
+    Console::moveC(this->frameSize.w / 2 - 17, this->frameSize.h / 2 - 1);
     
     // Getting the player name
     printf("Enter your name: ");
     std::string nameInput;
     std::cin >> nameInput;
 
+    // Flushing the input
+    std::cin.get();
+
     // Creating the player
     this->player = Player(nameInput);
+}
+
+// Prints the specific player scores
+void Flappy::search() {
+    // Clearing the console
+    Console::clear();
+
+    // Centering the cursor
+    Console::moveC(this->frameSize.w / 2 - 17, this->frameSize.h / 2 - 1);
+
+    // Getting the name
+    printf("Name to search: ");
+    std::string toSearchFor;
+    std::cin >> toSearchFor;
+
+    // Flushing the input
+    std::cin.get();
+
+    // Search and print specific player scores
+    Score::list(scoresFile, toSearchFor, frameSize);
 }
 
 // Game's main menu
@@ -43,7 +69,7 @@ void Flappy::menu() {
     int arrowPos = 0;
 
     // Main menu work
-    this->console.clear();
+    Console::clear();
     while (chosen != 4) {
         switch (chosen) {
         case 0:
@@ -52,7 +78,7 @@ void Flappy::menu() {
 
             // Data clearing
             chosen = -1;
-            this->console.clear();
+            Console::clear();
             break;
 
         case 1:
@@ -61,54 +87,54 @@ void Flappy::menu() {
 
             // Data clearing
             chosen = -1;
-            this->console.clear();
+            Console::clear();
             break;
 
         case 2:
             // Sort and print scores
-            //HandleScores(frameWidth, frameHeight);
+            Score::list(scoresFile, this->frameSize);
             
             // Data clearing
             chosen = -1;
-            this->console.clear();
+            Console::clear();
             break;
 
         case 3:
-            // Search and print specific player
-            //SearchForPlayer(frameWidth, frameHeight);
+            // Search and print specific player scores
+            this->search();
 
             // Data clearing
             chosen = -1;
-            this->console.clear();
+            Console::clear();
             break;
 
         default:
             // Logged in info
-            this->console.moveC(0, 0);
+            Console::moveC(0, 0);
             printf("Logged in as: %s", player.name.c_str());
 
             // Drawing the logo
-            this->console.moveC(this->frameSize.w / 2 - 27, 4);
+            Console::moveC(this->frameSize.w / 2 - 27, 4);
             printf("    ________                           ____  _          __ ");
-            this->console.moveC(this->frameSize.w / 2 - 27, 5);
+            Console::moveC(this->frameSize.w / 2 - 27, 5);
             printf("   / ____/ /___ _____  ____  __  __   / __ )(_)________/ / ");
-            this->console.moveC(this->frameSize.w / 2 - 27, 6);
+            Console::moveC(this->frameSize.w / 2 - 27, 6);
             printf("  / /_  / / __ `/ __ \\/ __ \\/ / / /  / __  / / ___/ __  /");
-            this->console.moveC(this->frameSize.w / 2 - 27, 7);
+            Console::moveC(this->frameSize.w / 2 - 27, 7);
             printf(" / __/ / / /_/ / /_/ / /_/ / /_/ /  / /_/ / / /  / /_/ /   ");
-            this->console.moveC(this->frameSize.w / 2 - 27, 8);
+            Console::moveC(this->frameSize.w / 2 - 27, 8);
             printf("/_/   /_/\\__,_/ .___/ .___/\\__, /  /_____/_/_/   \\__,_/ ");
-            this->console.moveC(this->frameSize.w / 2 - 27, 9);
+            Console::moveC(this->frameSize.w / 2 - 27, 9);
             printf("             /_/   /_/    /____/                           ");
 
             // Menu loop
             char keyInput = 0;
             while (keyInput != 13 && keyInput != ' ') {
                 // Hide cursor (just in case it becomes visible again)
-                this->console.hideC();
+                Console::hideC();
                 
                 // Getting the keyboard input
-                keyInput = this->console.input();
+                keyInput = Console::input();
 
                 // Checking the keyboard input
                 if (keyInput == 72 && arrowPos > 0) {
@@ -137,14 +163,14 @@ void Flappy::menu() {
 
                 // Display the menu
                 for (int i = 0; i < 5; i++) {
-                    this->console.moveC((this->frameSize.w / 2) - 6, (this->frameSize.h / 2) + (i - 1));
+                    Console::moveC((this->frameSize.w / 2) - 6, (this->frameSize.h / 2) + (i - 1));
                     std::cout << menuStrings[i];
                 }
             }
 
             // Data clearing
             chosen = arrowPos;
-            this->console.clear();
+            Console::clear();
             break;
         }
     }
@@ -158,8 +184,9 @@ void Flappy::game() {
     // Player setup
     this->player.position = this->frameSize.h / 2.0f;
     this->player.velocity = 0;
-    this->player.pillars = 0;
-    this->player.spaces = 0;
+
+    // Score setup
+    Score score(this->player.name);
 
     // Memory allocation
     std::vector<Pillar> pillars((this->frameSize.w / 20) + 2);
@@ -172,7 +199,7 @@ void Flappy::game() {
     }
 
     // Game loop
-    console.clear();
+    Console::clear();
     bool running = true;
     Timer timer;
     while (running) {
@@ -181,33 +208,34 @@ void Flappy::game() {
         const float elapsedT = timer.elapsed();
 
         // Getting the pressed key
-        const char key = this->console.input();
+        const char key = Console::input();
 
         // Cleares frame data
         frame.clear();
 
         // Pillar update
         for (int i = 0; i < pillars.size(); i++) {
-            player.pillars += pillars[i].phys(frameSize, deltaT);
+            score.pillars += pillars[i].phys(frameSize, deltaT);
             pillars[i].draw(frame, frameSize);
         }
 
         // Player update
         if (key == ' ') {
             player.velocity -= 10;
-            player.spaces++;
+            score.spaces++;
         }
         this->player.phys(20, deltaT);
         running = this->player.draw(frame, this->frameSize);
 
         // Title update
-        console.title(std::to_string(player.pillars));
+        Console::title(std::to_string(score.pillars));
 
         // Displaying the frame
-        this->console.moveC(0, 0);
+        Console::moveC(0, 0);
         frame.display();
     }
+    score.time = timer.elapsed();
 
-    // Saves users score to scores.bin
-    //SaveUserScore(&_playerScore);
+    // Saving the score to a bin file
+    score.save(scoresFile);
 }

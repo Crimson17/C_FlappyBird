@@ -148,6 +148,7 @@
     <ClCompile Include="src\Frame.cpp" />
     <ClCompile Include="src\Pillar.cpp" />
     <ClCompile Include="src\Player.cpp" />
+    <ClCompile Include="src\Score.cpp" />
     <ClCompile Include="src\Size.cpp" />
     <ClCompile Include="src\Timer.cpp" />
     <ClCompile Include="src\_Main.cpp" />
@@ -158,6 +159,7 @@
     <ClInclude Include="incl\Frame.h" />
     <ClInclude Include="incl\Pillar.h" />
     <ClInclude Include="incl\Player.h" />
+    <ClInclude Include="incl\Score.h" />
     <ClInclude Include="incl\Size.h" />
     <ClInclude Include="incl\Timer.h" />
   </ItemGroup>

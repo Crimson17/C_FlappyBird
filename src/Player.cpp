@@ -5,18 +5,12 @@ Player::Player() {
 	this->name = "_unknown";
 	this->position = 0;
 	this->velocity = 0;
-
-	this->spaces = 0;
-	this->pillars = 0;
 }
 
 Player::Player(const std::string& name) {
 	this->name = name;
 	this->position = 0;
 	this->velocity = 0;
-
-	this->spaces = 0;
-	this->pillars = 0;
 }
 
 // Updates the player physics
