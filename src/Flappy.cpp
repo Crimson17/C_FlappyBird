@@ -71,9 +71,6 @@ void Flappy::menu() {
     int chosen = -1;
     int arrowPos = 0;
 
-    // Title update
-    Console::title("Flappy!");
-
     // Main menu work
     Console::clear();
     while (chosen != 4) {
@@ -115,6 +112,9 @@ void Flappy::menu() {
             break;
 
         default:
+            // Title update
+            Console::title("Flappy!");
+
             // Logged in info
             Console::moveC(0, 0);
             printf("Logged in as: %s", player.name.c_str());
