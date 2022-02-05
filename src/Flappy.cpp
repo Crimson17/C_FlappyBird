@@ -27,6 +27,9 @@ void Flappy::login() {
     // Clearing the console
     Console::clear();
 
+    // Title update
+    Console::title("Please login!");
+
     // Centering the cursor
     Console::moveC(this->frameSize.w / 2 - 17, this->frameSize.h / 2 - 1);
     
@@ -67,6 +70,9 @@ void Flappy::menu() {
     // Menu data
     int chosen = -1;
     int arrowPos = 0;
+
+    // Title update
+    Console::title("Flappy!");
 
     // Main menu work
     Console::clear();
@@ -226,9 +232,6 @@ void Flappy::game() {
         }
         this->player.phys(20, deltaT);
         running = this->player.draw(frame, this->frameSize);
-
-        // Title update
-        Console::title(std::to_string(score.pillars));
 
         // Displaying the frame
         Console::moveC(0, 0);

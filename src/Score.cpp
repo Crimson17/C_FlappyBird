@@ -81,12 +81,37 @@ void Score::list(const std::string& filePath, const Size& frameSize) {
         }
     }
 
+    // Finding the longest name
+    int longestName = 0;
+    for (int i = 0; i < scores.size(); i++) {
+        const int tempLen = int(std::string(scores[i].name).size());
+        if (tempLen > longestName) {
+            longestName = tempLen;
+        }
+    }
+    longestName++;
+
     // Printing the scores
     Console::clear();
     for (int i = 0; i < scores.size(); i++) {
         // Generating the string
         std::stringstream ss;
-        ss << (i + 1) << ". " << scores[i].name << ":: pillars : " << scores[i].pillars << " | spacebars: " << scores[i].spaces << " | time: " << scores[i].time;
+        ss.width(5);
+        ss << (i + 1);
+        ss << ". ";
+        ss.width(longestName);
+        ss << scores[i].name;
+        ss << " -> pillars : ";
+        ss.width(5);
+        ss << scores[i].pillars;
+        ss << " | spacebars: ";
+        ss.width(5);
+        ss << scores[i].spaces;
+        ss << " | time: ";
+        ss.width(8);
+        ss.precision(2);
+        ss << std::fixed;
+        ss << scores[i].time;
         const std::string toPrint = ss.str();
 
         // Aligning the cursor
@@ -121,7 +146,7 @@ void Score::list(const std::string& filePath, const std::string& name, const Siz
     Console::clear();
     if (scores.size() == 0) {
         // Message
-        std::string message = "There are NO available scores for this player!";
+        std::string message = "There are no available scores for this player!";
 
         // Aligning the cursor
         Console::moveC(frameSize.w / 2 - int(message.size()) / 2, frameSize.h / 2 - 2);
@@ -131,10 +156,26 @@ void Score::list(const std::string& filePath, const std::string& name, const Siz
     }
     // Printing the scores
     else {
+        const int nameLen = int(name.size()) + 1;
         for (int i = 0; i < scores.size(); i++) {
             // Generating the string
             std::stringstream ss;
-            ss << (i + 1) << ". " << scores[i].name << ":: pillars : " << scores[i].pillars << " | spacebars: " << scores[i].spaces << " | time: " << scores[i].time;
+            ss.width(5);
+            ss << (i + 1);
+            ss << ". ";
+            ss.width(nameLen);
+            ss << scores[i].name;
+            ss << " -> pillars : ";
+            ss.width(5);
+            ss << scores[i].pillars;
+            ss << " | spacebars: ";
+            ss.width(5);
+            ss << scores[i].spaces;
+            ss << " | time: ";
+            ss.width(8);
+            ss.precision(2);
+            ss << std::fixed;
+            ss << scores[i].time;
             const std::string toPrint = ss.str();
 
             // Aligning the cursor
