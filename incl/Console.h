@@ -10,6 +10,9 @@
 // Returns the console handle
 class Console {
 public:
+	// Constructor deletion
+	Console() = delete;
+
 	// Cursor
 	static void hideC();
 	static void moveC(int, int);
