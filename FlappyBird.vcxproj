@@ -18,6 +18,27 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="source\console.cpp" />
+    <ClCompile Include="source\flappy.cpp" />
+    <ClCompile Include="source\frame.cpp" />
+    <ClCompile Include="source\main.cpp" />
+    <ClCompile Include="source\pillar.cpp" />
+    <ClCompile Include="source\player.cpp" />
+    <ClCompile Include="source\score.cpp" />
+    <ClCompile Include="source\size.cpp" />
+    <ClCompile Include="source\timer.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="source\console.h" />
+    <ClInclude Include="source\flappy.h" />
+    <ClInclude Include="source\frame.h" />
+    <ClInclude Include="source\pillar.h" />
+    <ClInclude Include="source\player.h" />
+    <ClInclude Include="source\score.h" />
+    <ClInclude Include="source\size.h" />
+    <ClInclude Include="source\timer.h" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
@@ -78,9 +99,13 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
+    <OutDir>$(SolutionDir)bin\debug\</OutDir>
+    <IntDir>$(SolutionDir)bin\debug\intermediate\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
+    <OutDir>$(SolutionDir)bin\release\</OutDir>
+    <IntDir>$(SolutionDir)bin\release\intermediate\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -118,7 +143,8 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)incl\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)source\</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -133,7 +159,8 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)incl\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)source\</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -142,27 +169,6 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="src\Console.cpp" />
-    <ClCompile Include="src\Flappy.cpp" />
-    <ClCompile Include="src\Frame.cpp" />
-    <ClCompile Include="src\Pillar.cpp" />
-    <ClCompile Include="src\Player.cpp" />
-    <ClCompile Include="src\Score.cpp" />
-    <ClCompile Include="src\Size.cpp" />
-    <ClCompile Include="src\Timer.cpp" />
-    <ClCompile Include="src\_Main.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="incl\Console.h" />
-    <ClInclude Include="incl\Flappy.h" />
-    <ClInclude Include="incl\Frame.h" />
-    <ClInclude Include="incl\Pillar.h" />
-    <ClInclude Include="incl\Player.h" />
-    <ClInclude Include="incl\Score.h" />
-    <ClInclude Include="incl\Size.h" />
-    <ClInclude Include="incl\Timer.h" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
