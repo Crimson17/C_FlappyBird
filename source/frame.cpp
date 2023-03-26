@@ -6,12 +6,12 @@
 
 frame::frame(const size& size)
 {
-	data.resize(static_cast<uint64_t>(size.width) * size.height);
+	data.resize((size_t) size.width * size.height);
 }
 
 void frame::clear()
 {
-    for (char& value : data) {
+    for (auto& value : data) {
         value = ' ';
     }
 }

@@ -1,3 +1,9 @@
-# Console Flappy Bird in C++
-A copy of the popular mobile game called flappy bird I made in C for my school project(later reworked with c++).<br />
-**WARNING** This thing is really rage inducing...
+## About
+
+A copy of the popular mobile game called Flappy Bird  
+It was originally made in C but I reworked it later in C++  
+Have fun!
+
+## Screenshots
+![](screens/main_menu.png)
+![](screens/game_view.png)

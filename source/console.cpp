@@ -15,7 +15,7 @@ void console::hide_cursor()
 
 void console::move_cursor(const int x, const int y)
 {
-	const COORD position = { static_cast<short>(x), static_cast<short>(y) };
+	const COORD position = { (short) x, (short) y };
 	SetConsoleCursorPosition(console::handle_, position);
 }
 

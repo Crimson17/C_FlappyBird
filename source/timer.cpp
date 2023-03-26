@@ -5,7 +5,7 @@ timer::timer()
 {
 	LARGE_INTEGER frequency = {};
 	QueryPerformanceFrequency(&frequency);
-	rec_frequency_ = 1.0f / static_cast<float>(frequency.QuadPart);
+	rec_frequency_ = 1.0f / frequency.QuadPart;
 	reset();
 }
 
@@ -33,5 +33,5 @@ float timer::get_elapsed() const
 
 float timer::calculate_time(const LARGE_INTEGER& start, const LARGE_INTEGER& end) const
 {
-	return static_cast<float>(end.QuadPart - start.QuadPart) * rec_frequency_;
+	return (end.QuadPart - start.QuadPart) * rec_frequency_;
 }

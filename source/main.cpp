@@ -5,6 +5,6 @@
 
 int main()
 {
-	srand(static_cast<uint32_t>(time(nullptr)));
+	srand((uint32_t) time(nullptr));
 	flappy flappy = {};
 }

@@ -60,7 +60,7 @@ void score::list(const std::string& filepath, const size& frame_size)
 
     int longest_name = 0;
     for (auto& score : scores) {
-        if (const int temp_len = static_cast<int>(std::string(score.name).size()); temp_len > longest_name) {
+        if (const int temp_len = (int) std::string(score.name).size(); temp_len > longest_name) {
             longest_name = temp_len;
         }
     }
@@ -87,7 +87,7 @@ void score::list(const std::string& filepath, const size& frame_size)
         stream << scores[i].time;
         const std::string to_print = stream.str();
         
-        console::move_cursor(frame_size.width / 2 - static_cast<int>(to_print.size()) / 2, static_cast<int>(2 + i));
+        console::move_cursor(frame_size.width / 2 - (int) to_print.size() / 2, (int) (2 + i));
         std::cout << to_print;
     }
     std::cin.get();
@@ -111,11 +111,11 @@ void score::list(const std::string& filepath, const std::string& name, const siz
     console::clear();
     if (scores.empty()) {
         const std::string message = "There are no available scores for this player!";
-        console::move_cursor(frame_size.width / 2 - static_cast<int>(message.size()) / 2, frame_size.height / 2 - 2);
+        console::move_cursor(frame_size.width / 2 - (int) message.size() / 2, frame_size.height / 2 - 2);
         std::cout << message;
     }
     else {
-        const int name_len = static_cast<int>(name.size()) + 1;
+        const int name_len = (int) name.size() + 1;
         for (uint64_t i = 0; i < scores.size(); i++) {
             std::stringstream ss;
             ss.width(5);
@@ -136,7 +136,7 @@ void score::list(const std::string& filepath, const std::string& name, const siz
             ss << scores[i].time;
             const std::string to_print = ss.str();
 
-            console::move_cursor(frame_size.width / 2 - static_cast<int>(to_print.size()) / 2, static_cast<int>(2 + i));
+            console::move_cursor(frame_size.width / 2 - (int) to_print.size() / 2, (int) (2 + i));
             std::cout << to_print;
         }
     }

@@ -144,7 +144,7 @@ void flappy::menu()
 
 void flappy::game()
 {
-    player_.position = static_cast<float>(frame_size_.height) / 2.0f;
+    player_.position = frame_size_.height * 0.5f;
     player_.velocity = 0;
 
     score score(player_.name);
@@ -153,8 +153,8 @@ void flappy::game()
     frame frame(frame_size_);
 
     for (uint64_t i = 0; i < pillars.size(); i++) {
-        pillars[i].x = static_cast<float>(frame_size_.width) + 2.0f + static_cast<float>(i * 20);
-        pillars[i].y = static_cast<float>(rand() % (frame_size_.height - 15)) + 5.0f;
+        pillars[i].x = frame_size_.width + 2.0f + (i * 20.0f);
+        pillars[i].y = (rand() % (frame_size_.height - 15)) + 5.0f;
     }
 
     console::clear();
